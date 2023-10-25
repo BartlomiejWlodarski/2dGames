@@ -1,16 +1,16 @@
 #include "Square.h"
 
-Square::Square(int screenWidth, int screenHeight, int startX, int startY)
+Square::Square(int levelWidth, int levelHeight, int startX, int startY)
 {
 	this->squarePosX = startX;
 	this->squarePosY = startY;
 	this->squareVelX = 0;
 	this->squareVelY = 0;
 
-	this->SCREEN_WIDTH = screenWidth;
-	this->SCREEN_HEIGHT = screenHeight;
+	this->LEVEL_WIDTH = levelWidth;
+	this->LEVEL_HEIGHT = levelHeight;
 
-	this->squareSize = SCREEN_HEIGHT / 10;
+	this->squareSize = LEVEL_HEIGHT / 10;
 }
 
 int Square::getSquareSize()
@@ -69,7 +69,7 @@ void Square::moveSquare()
 	squarePosX += squareVelX;
 
 	//If the dot went too far to the left or right
-	if ((squarePosX < 0) || (squarePosX + squareSize > SCREEN_WIDTH))
+	if ((squarePosX < 0) || (squarePosX + squareSize > LEVEL_WIDTH))
 	{
 		//Move back
 		squarePosX -= squareVelX;
@@ -79,7 +79,7 @@ void Square::moveSquare()
 	squarePosY += squareVelY;
 
 	//If the dot went too far up or down
-	if ((squarePosY < 0) || (squarePosY + squareSize > SCREEN_HEIGHT))
+	if ((squarePosY < 0) || (squarePosY + squareSize > LEVEL_HEIGHT))
 	{
 		//Move back
 		squarePosY -= squareVelY;

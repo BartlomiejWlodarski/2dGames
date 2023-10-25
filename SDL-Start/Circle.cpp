@@ -1,6 +1,6 @@
 #include "Circle.h"
 
-Circle::Circle(int screenWidth, int screenHeight, int startX, int startY)
+Circle::Circle(int levelWidth, int levelHeight, int startX, int startY)
 {
 	this->circlePosX = startX;
 	this->circlePosY = startY;
@@ -8,8 +8,8 @@ Circle::Circle(int screenWidth, int screenHeight, int startX, int startY)
 	this->circleVelY = 0;
 	this->circleDesX = this->circlePosX;
 	this->circleDesY = this->circlePosY;
-	this->SCREEN_WIDTH = screenWidth;
-	this->SCREEN_HEIGHT = screenHeight;
+	this->LEVEL_WIDTH = levelWidth;
+	this->LEVEL_HEIGHT = levelHeight;
 }
 
 int Circle::getCirclePosX()
@@ -91,7 +91,7 @@ void Circle::moveCircle(int textureWidth, int textureHeight)
 		circlePosX += (int)circleVelStepX;
 	}
 
-	if ((circlePosX - textureWidth / 2 < 0) || (circlePosX + textureWidth/2 > SCREEN_WIDTH))
+	if ((circlePosX - textureWidth / 2 < 0) || (circlePosX + textureWidth/2 > LEVEL_WIDTH))
 	{
 		//Move back
 		circlePosX -= (int)circleVelStepX;
@@ -101,16 +101,18 @@ void Circle::moveCircle(int textureWidth, int textureHeight)
 		circlePosY += (int)circleVelStepY;
 	}
 
-	if ((circlePosY - textureHeight / 2 < 0) || (circlePosY + textureHeight/2 > SCREEN_HEIGHT))
+	if ((circlePosY - textureHeight / 2 < 0) || (circlePosY + textureHeight/2 > LEVEL_HEIGHT))
 	{
 		//Move back
 		circlePosY -= (int)circleVelStepY;
 	}
 }
 
-void Circle::playerKeyPressed(int textureWidth, int textureHeight)
+void Circle::playerKeyPressed(int textureWidth, int textureHeight, int camX, int camY)
 {
 	SDL_GetMouseState(&circleDesX, &circleDesY);
+	circleDesX += camX;	
+	circleDesY += camY;
 	/*circleDesX -= textureWidth / 2;
 	circleDesY -= textureHeight / 2;*/
 	circleVelStepX = (float)((float)(circleDesX - circlePosX) / 200);

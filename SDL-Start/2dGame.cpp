@@ -17,13 +17,13 @@ const int SCREEN_WIDTH = 1040;
 const int SCREEN_HEIGHT = 720;
 
 //Level dimension constants
-const int LEVEL_WIDTH = 1600;
-const int LEVEL_HEIGHT = 1200;
+const int LEVEL_WIDTH = 1760;
+const int LEVEL_HEIGHT = 1440;
 
 //Tile constants
 const int TILE_WIDTH = 80;
 const int TILE_HEIGHT = 80;
-const int TOTAL_TILES = 117;
+const int TOTAL_TILES = 396;
 const int TOTAL_TILE_SPRITES = 12;
 
 //The different tile sprites
@@ -63,15 +63,15 @@ LTexture gTileTexture;
 SDL_Rect gTileClips[TOTAL_TILE_SPRITES];
 
 //Square constants and variables
-Square square(SCREEN_WIDTH, SCREEN_HEIGHT, 200, 200);
+Square square(LEVEL_WIDTH, LEVEL_HEIGHT, 200, 200);
 
 //Circle constants and variables
-Circle circle(SCREEN_WIDTH, SCREEN_HEIGHT, 200, 200);
+Circle circle(LEVEL_WIDTH, LEVEL_HEIGHT, 614, 454);
 
-void renderTile(Tile* tile)
+void renderTile(Tile* tile, SDL_Rect& camera)
 {
 	//Show the tile
-	gTileTexture.render(gRenderer, tile->getBox().x, tile->getBox().y, &gTileClips[tile->getType()]);
+	gTileTexture.render(gRenderer, tile->getBox().x - camera.x, tile->getBox().y - camera.y, &gTileClips[tile->getType()]);
 }
 
 
@@ -188,7 +188,7 @@ void close(Tile* tiles[])
 	SDL_Quit();
 }
 
-void handleEvent(SDL_Event& e)
+void handleEvent(SDL_Event& e, int camX, int camY)
 {
 	//If a key was pressed
 	if (e.type == SDL_KEYDOWN && e.key.repeat == 0)
@@ -206,7 +206,7 @@ void handleEvent(SDL_Event& e)
 	}
 	if (e.type == SDL_MOUSEBUTTONDOWN)
 	{
-		circle.playerKeyPressed(gCircleTexture.getWidth(), gCircleTexture.getHeight());
+		circle.playerKeyPressed(gCircleTexture.getWidth(), gCircleTexture.getHeight(), camX, camY);
 	}
 }
 
@@ -219,7 +219,7 @@ bool setTiles(Tile* tiles[])
 	int x = 0, y = 0;
 
 	//Open the map
-	std::ifstream map("maps/map1.map");
+	std::ifstream map("maps/map3.map");
 
 	//If the map couldn't be loaded
 	if (map.fail())
@@ -265,7 +265,7 @@ bool setTiles(Tile* tiles[])
 			x += TILE_WIDTH;
 
 			//If we've gone too far
-			if (x >= SCREEN_WIDTH)
+			if (x >= LEVEL_WIDTH)
 			{
 				//Move back
 				x = 0;
@@ -371,11 +371,15 @@ int main(int argc, char* args[])
 			gCircleTexture.setHeight(gCircleTexture.getHeight() / 10);
 			circle.setCirclePosX(circle.getCirclePosX() + (gCircleTexture.getWidth() / 2));
 			circle.setCirclePosY(circle.getCirclePosY() + (gCircleTexture.getHeight() / 2));
+
 			//Main loop flag
 			bool quit = false;
 
 			//Event handler
 			SDL_Event e;
+
+			//The camera area
+			SDL_Rect camera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
 
 			//While application is running
 			while (!quit)
@@ -388,10 +392,34 @@ int main(int argc, char* args[])
 					{
 						quit = true;
 					}
-					handleEvent(e);
+					handleEvent(e, camera.x, camera.y);
 				}
+				
+				//Move objects
 				square.moveSquare();
+				circle.moveCircle(gCircleTexture.getWidth(), gCircleTexture.getHeight());
 
+				//Center the camera over the dot
+				camera.x = (circle.getCirclePosX()) - SCREEN_WIDTH / 2;
+				camera.y = (circle.getCirclePosY()) - SCREEN_HEIGHT / 2;
+
+				//Keep the camera in bounds
+				if (camera.x < 0)
+				{
+					camera.x = 0;
+				}
+				if (camera.y < 0)
+				{
+					camera.y = 0;
+				}
+				if (camera.x > LEVEL_WIDTH - camera.w)
+				{
+					camera.x = LEVEL_WIDTH - camera.w;
+				}
+				if (camera.y > LEVEL_HEIGHT - camera.h)
+				{
+					camera.y = LEVEL_HEIGHT - camera.h;
+				}
 
 				//Clear screen
 				SDL_SetRenderDrawColor(gRenderer, 0x00, 0xFF, 0xFF, 0xFF);
@@ -400,17 +428,16 @@ int main(int argc, char* args[])
 				//Render level
 				for (int i = 0; i < TOTAL_TILES; ++i)
 				{
-					renderTile(tileSet[i]);
+					renderTile(tileSet[i], camera);
 				}
 
 				//Render square
-				SDL_Rect fillRect = { square.getSquarePosX(), square.getSquarePosY(), square.getSquareSize(), square.getSquareSize()};
+				SDL_Rect fillRect = { square.getSquarePosX() - camera.x, square.getSquarePosY() - camera.y, square.getSquareSize(), square.getSquareSize()};
 				SDL_SetRenderDrawColor(gRenderer, 0xFF, 0x00, 0x00, 0xFF);
 				SDL_RenderFillRect(gRenderer, &fillRect);
 
 				//Render semi-translucent circle
-				circle.moveCircle(gCircleTexture.getWidth(), gCircleTexture.getHeight());
-				gCircleTexture.render(gRenderer, circle.getCirclePosX() - (gCircleTexture.getWidth() / 2), circle.getCirclePosY() - (gCircleTexture.getHeight() / 2));
+				gCircleTexture.render(gRenderer, circle.getCirclePosX() - (gCircleTexture.getWidth() / 2) - camera.x, circle.getCirclePosY() - (gCircleTexture.getHeight() / 2) - camera.y);
 
 				//Update screen
 				SDL_RenderPresent(gRenderer);

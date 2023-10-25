@@ -15,11 +15,11 @@ private:
 	float circleVelStepX = 0;
 	float circleVelStepY = 0;
 
-	int SCREEN_WIDTH;
-	int SCREEN_HEIGHT;
+	int LEVEL_WIDTH;
+	int LEVEL_HEIGHT;
 
 public:
-	Circle(int screenWidth, int screenHeight, int startX, int startY);
+	Circle(int levelWidth, int levelHeight, int startX, int startY);
 	int getCirclePosX();
 	void setCirclePosX(int value);
 	int getCirclePosY();
@@ -34,6 +34,6 @@ public:
 	void setCircleDesY(int value);
 	float roundToUpper(float a);
 	void moveCircle(int textureWidth, int textureHeight);
-	void playerKeyPressed(int textureWidth, int textureHeight);
+	void playerKeyPressed(int textureWidth, int textureHeight, int camX, int camY);
 };
 

@@ -14,11 +14,11 @@ private:
 	const int squareVelStep = 2;
 	const float smooth = 0.5;
 
-	int SCREEN_WIDTH;
-	int SCREEN_HEIGHT;
+	int LEVEL_WIDTH;
+	int LEVEL_HEIGHT;
 
 public:
-	Square(int screenWidth, int screenHeight, int startX, int startY);
+	Square(int levelWidth, int levelHeight, int startX, int startY);
 	int getSquareSize();
 	void setSquareSize(int value);
 	int getSquarePosX();
