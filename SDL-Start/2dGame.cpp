@@ -40,6 +40,11 @@ const int TILE_BOTTOMLEFT = 9;
 const int TILE_LEFT = 10;
 const int TILE_TOPLEFT = 11;
 
+int camLineX1 = SCREEN_WIDTH / 2;
+int camLineY1 = SCREEN_HEIGHT / 4;
+int camLineX2 = SCREEN_WIDTH / 2;
+int camLineY2 = SCREEN_HEIGHT * 3 / 4;
+
 //Starts up SDL and creates window
 bool init();
 
@@ -347,6 +352,46 @@ bool setTiles(Tile* tiles[])
 	return tilesLoaded;
 }
 
+void positionLockEdgeSnappingCamera(int *camX, int *camY, int *camW, int *camH)
+{
+	//Center the camera over the dot
+	*camX = (circle.getCirclePosX()) - SCREEN_WIDTH / 2;
+	*camY = (circle.getCirclePosY()) - SCREEN_HEIGHT / 2;
+
+	//Keep the camera in bounds
+	if (*camX < 0)
+	{
+		*camX = 0;
+	}
+	if (*camY < 0)
+	{
+		*camY = 0;
+	}
+	if (*camX > LEVEL_WIDTH - *camW)
+	{
+		*camX = LEVEL_WIDTH - *camW;
+	}
+	if (*camY > LEVEL_HEIGHT - *camH)
+	{
+		*camY = LEVEL_HEIGHT - *camH;
+	}
+}
+
+void positionLockCameraWindow(int* camX, int* camY, int* camW, int* camH)
+{
+	*camX = (circle.getCirclePosX()) - SCREEN_WIDTH / 2;
+
+	if (circle.getCirclePosY() < camLineY1 + *camY)
+	{
+		*camY += circle.getCirclePosY() - (camLineY1 + *camY);
+	}
+
+	if (circle.getCirclePosY() > camLineY2 + *camY)
+	{
+		*camY += circle.getCirclePosY() - (camLineY2 + *camY);
+	}
+}
+
 int main(int argc, char* args[])
 {
 
@@ -381,6 +426,8 @@ int main(int argc, char* args[])
 			//The camera area
 			SDL_Rect camera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
 
+			camera.y = (circle.getCirclePosY()) - SCREEN_HEIGHT / 2;
+
 			//While application is running
 			while (!quit)
 			{
@@ -399,27 +446,8 @@ int main(int argc, char* args[])
 				square.moveSquare();
 				circle.moveCircle(gCircleTexture.getWidth(), gCircleTexture.getHeight());
 
-				//Center the camera over the dot
-				camera.x = (circle.getCirclePosX()) - SCREEN_WIDTH / 2;
-				camera.y = (circle.getCirclePosY()) - SCREEN_HEIGHT / 2;
-
-				//Keep the camera in bounds
-				if (camera.x < 0)
-				{
-					camera.x = 0;
-				}
-				if (camera.y < 0)
-				{
-					camera.y = 0;
-				}
-				if (camera.x > LEVEL_WIDTH - camera.w)
-				{
-					camera.x = LEVEL_WIDTH - camera.w;
-				}
-				if (camera.y > LEVEL_HEIGHT - camera.h)
-				{
-					camera.y = LEVEL_HEIGHT - camera.h;
-				}
+				positionLockEdgeSnappingCamera(&camera.x, &camera.y, &camera.w, &camera.h);
+				//positionLockCameraWindow(&camera.x, &camera.y, &camera.w, &camera.h);
 
 				//Clear screen
 				SDL_SetRenderDrawColor(gRenderer, 0x00, 0xFF, 0xFF, 0xFF);
@@ -439,7 +467,14 @@ int main(int argc, char* args[])
 				//Render semi-translucent circle
 				gCircleTexture.render(gRenderer, circle.getCirclePosX() - (gCircleTexture.getWidth() / 2) - camera.x, circle.getCirclePosY() - (gCircleTexture.getHeight() / 2) - camera.y);
 
+				//Render square
+				SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xFF);
+
+
+				SDL_RenderDrawLine(gRenderer, camLineX1, camLineY1, camLineX2, camLineY2);
+
 				//Update screen
+				
 				SDL_RenderPresent(gRenderer);
 			}
 		}
