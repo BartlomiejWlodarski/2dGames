@@ -1,0 +1,4 @@
+Fix twoPlayerCameraWindow:
+- checkCameraWindow during circle move like for square
+- add 2nd camera for 2 players
+- add sprite

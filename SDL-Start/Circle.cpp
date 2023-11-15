@@ -85,7 +85,7 @@ float Circle::roundToUpper(float a)
 	return a;
 }
 
-void Circle::moveCircle(int textureWidth, int textureHeight)
+void Circle::moveCircle(int textureWidth, int textureHeight, int stopCircleX, int stopCircleY)
 {
 	if (abs(circlePosX - circleDesX) > abs(circleVelStepX)) {
 		circlePosX += (int)circleVelStepX;
@@ -108,7 +108,7 @@ void Circle::moveCircle(int textureWidth, int textureHeight)
 	}
 }
 
-void Circle::playerKeyPressed(int textureWidth, int textureHeight, int camX, int camY)
+void Circle::playerKeyPressed(int textureWidth, int textureHeight, int camX, int camY, int* stopCircleX, int* stopCircleY)
 {
 	SDL_GetMouseState(&circleDesX, &circleDesY);
 	circleDesX += camX;	
@@ -120,5 +120,22 @@ void Circle::playerKeyPressed(int textureWidth, int textureHeight, int camX, int
 	circleVelStepY = (float)((float)(circleDesY - circlePosY) / 200);
 	circleVelStepY = roundToUpper(circleVelStepY);
 	std::cout << "Mouse clicked at position: x - " << circleDesX << "; y - " << circleDesY << "\n";
+	if (circleDesX < circlePosX && *stopCircleX == 1)
+	{
+		circleDesX = circlePosX;
+	}
+	if (circleDesX >= circlePosX && *stopCircleX == -1)
+	{
+		circleDesX = circlePosX;
+	}
+
+	if (circleDesY < circlePosY && *stopCircleY == 1)
+	{
+		circleDesY = circlePosY;
+	}
+	if (circleDesY >= circlePosY && *stopCircleY == -1)
+	{
+		circleDesY = circlePosY;
+	}
 }
 

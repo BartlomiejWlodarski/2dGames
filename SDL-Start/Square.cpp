@@ -63,8 +63,9 @@ void Square::setSquareVelY(int value)
 	this->squareVelY = value;
 }
 
-void Square::moveSquare()
+void Square::moveSquare(int stopX, int stopY)
 {
+	checkCameraWindow(stopX, stopY);
 	//Move the dot left or right
 	squarePosX += squareVelX;
 
@@ -93,15 +94,19 @@ void Square::playerKeyPressed(SDL_Keycode sym)
 	{
 	case SDLK_UP: squareVelY -= (squareVelStep * (1 - smooth)) + (squareVelY * smooth);
 		std::cout << "Up arrow pressed" << "\n";
+		up = true;
 		break;
 	case SDLK_DOWN: squareVelY += (squareVelStep * (1 - smooth)) + (squareVelY * smooth);
 		std::cout << "Down arrow pressed" << "\n";
+		down = true;
 		break;
 	case SDLK_LEFT: squareVelX -= (squareVelStep * (1 - smooth)) + (squareVelX * smooth);
 		std::cout << "Left arrow pressed" << "\n";
+		left = true;
 		break;
 	case SDLK_RIGHT: squareVelX += (squareVelStep * (1 - smooth)) + (squareVelX * smooth);
 		std::cout << "Right arrow pressed" << "\n";
+		right = true;
 		break;
 	}
 }
@@ -110,18 +115,42 @@ void Square::playerKeyReleased(SDL_Keycode sym)
 {
 	switch (sym)
 	{
-	case SDLK_UP: squareVelY += (squareVelStep * (1 - smooth)) + (squareVelY * smooth);
+	case SDLK_UP: squareVelY = 0;
 		std::cout << "Up arrow released" << "\n";
+		up = false;
 		break;
-	case SDLK_DOWN: squareVelY -= (squareVelStep * (1 - smooth)) + (squareVelY * smooth);
+	case SDLK_DOWN: squareVelY = 0;
 		std::cout << "Down arrow released" << "\n";
+		down = false;
 		break;
-	case SDLK_LEFT: squareVelX += (squareVelStep * (1 - smooth)) + (squareVelX * smooth);
+	case SDLK_LEFT: squareVelX = 0;
 		std::cout << "Left arrow released" << "\n";
+		left = false;
 		break;
-	case SDLK_RIGHT: squareVelX -= (squareVelStep * (1 - smooth)) + (squareVelX * smooth);
+	case SDLK_RIGHT: squareVelX = 0;
 		std::cout << "Right arrow released" << "\n";
+		right = false;
 		break;
+	}
+}
+
+void Square::checkCameraWindow(int stopX, int stopY)
+{
+	if (stopY == 1 && up)
+	{
+		squareVelY = 0;
+	}
+	if (stopY == -1 && down)
+	{
+		squareVelY = 0;
+	}
+	if (stopX == 1 && left)
+	{
+		squareVelX = 0;
+	}
+	if (stopX == -1 && right)
+	{
+		squareVelX = 0;
 	}
 }
 

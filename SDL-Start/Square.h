@@ -16,6 +16,11 @@ private:
 
 	int LEVEL_WIDTH;
 	int LEVEL_HEIGHT;
+	
+	bool up;
+	bool down;
+	bool left;
+	bool right;
 
 public:
 	Square(int levelWidth, int levelHeight, int startX, int startY);
@@ -29,8 +34,9 @@ public:
 	void setSquareVelX(int value);
 	int getSquareVelY();
 	void setSquareVelY(int value);
-	void moveSquare();
+	void moveSquare(int stopX, int stopY);
 	void playerKeyPressed(SDL_Keycode sym);
 	void playerKeyReleased(SDL_Keycode sym);
+	void checkCameraWindow(int stopX, int stopY);
 };
 

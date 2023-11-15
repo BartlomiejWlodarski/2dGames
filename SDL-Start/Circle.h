@@ -33,7 +33,7 @@ public:
 	int getCircleDesY();
 	void setCircleDesY(int value);
 	float roundToUpper(float a);
-	void moveCircle(int textureWidth, int textureHeight);
-	void playerKeyPressed(int textureWidth, int textureHeight, int camX, int camY);
+	void moveCircle(int textureWidth, int textureHeight, int stopCircleX, int stopCircleY);
+	void playerKeyPressed(int textureWidth, int textureHeight, int camX, int camY, int* stopCircleX, int* stopCircleY);
 };
 
