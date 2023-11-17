@@ -7,6 +7,8 @@ class Square
 {
 private:
 	int squareSize;
+	int playerWidth;
+	int playerHeight;
 	int squarePosX;
 	int squarePosY;
 	int squareVelX;
@@ -26,6 +28,10 @@ public:
 	Square(int levelWidth, int levelHeight, int startX, int startY);
 	int getSquareSize();
 	void setSquareSize(int value);
+	int getPlayerWidth();
+	void setPlayerWidth(int value);
+	int getPlayerHeight();
+	void setPlayerHeight(int value);
 	int getSquarePosX();
 	void setSquarePosX(int value);
 	int getSquarePosY();

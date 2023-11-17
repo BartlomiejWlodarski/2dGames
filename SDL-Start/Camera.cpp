@@ -49,7 +49,7 @@ void Camera::positionLockCameraWindow(int playerX, int playerY)
 	}
 }
 
-void Camera::twoPlayersCameraWindow(int p1X, int p1Y, int p2X, int p2Y, int p2size)
+void Camera::twoPlayersCameraWindow(int p1X, int p1Y, int p2X, int p2Y, int p2width, int p2height)
 {
 
 	stopPlayer1X = 0;
@@ -58,11 +58,11 @@ void Camera::twoPlayersCameraWindow(int p1X, int p1Y, int p2X, int p2Y, int p2si
 	stopPlayer2Y = 0;
 
 	//Camera window horizontally
-	if (p1X < camWindowX1 + camera.x && p2X + p2size < camWindowX2 + camera.x)
+	if (p1X < camWindowX1 + camera.x && p2X + p2width < camWindowX2 + camera.x)
 	{
 		camera.x += p1X - (camWindowX1 + camera.x);
 	}
-	else if (p1X < camWindowX1 + camera.x && p2X + p2size >= camWindowX2 + camera.x)
+	else if (p1X < camWindowX1 + camera.x && p2X + p2width >= camWindowX2 + camera.x)
 	{
 		stopPlayer1X = 1;
 	}
@@ -77,11 +77,11 @@ void Camera::twoPlayersCameraWindow(int p1X, int p1Y, int p2X, int p2Y, int p2si
 	}
 
 	//Camera window vertically
-	if (p1Y < camWindowY1 + camera.y && p2Y + p2size < camWindowY2 + camera.y)
+	if (p1Y < camWindowY1 + camera.y && p2Y + p2height < camWindowY2 + camera.y)
 	{
 		camera.y += p1Y - (camWindowY1 + camera.y);
 	}
-	else if (p1Y < camWindowY1 + camera.y && p2Y + p2size >= camWindowY2 + camera.y)
+	else if (p1Y < camWindowY1 + camera.y && p2Y + p2height >= camWindowY2 + camera.y)
 	{
 		stopPlayer1Y = 1;
 	}
@@ -105,11 +105,11 @@ void Camera::twoPlayersCameraWindow(int p1X, int p1Y, int p2X, int p2Y, int p2si
 		stopPlayer2X = 1;
 	}
 
-	if (p2X + p2size > camWindowX2 + camera.x && p1X > camWindowX1 + camera.x)
+	if (p2X + p2width > camWindowX2 + camera.x && p1X > camWindowX1 + camera.x)
 	{
-		camera.x += p2X + p2size - (camWindowX2 + camera.x);
+		camera.x += p2X + p2width - (camWindowX2 + camera.x);
 	}
-	else if (p2X + p2size > camWindowX2 + camera.x && p1X <= camWindowX1 + camera.x)
+	else if (p2X + p2width > camWindowX2 + camera.x && p1X <= camWindowX1 + camera.x)
 	{
 		stopPlayer2X = -1;
 	}
@@ -123,11 +123,11 @@ void Camera::twoPlayersCameraWindow(int p1X, int p1Y, int p2X, int p2Y, int p2si
 		stopPlayer2Y = 1;
 	}
 
-	if (p2Y + p2size > camWindowY2 + camera.y && p1Y > camWindowY1 + camera.y)
+	if (p2Y + p2height > camWindowY2 + camera.y && p1Y > camWindowY1 + camera.y)
 	{
-		camera.y += p2Y + p2size - (camWindowY2 + camera.y);
+		camera.y += p2Y + p2height - (camWindowY2 + camera.y);
 	}
-	else if (p2Y + p2size > camWindowY2 + camera.y && p1Y <= camWindowY1 + camera.y)
+	else if (p2Y + p2height > camWindowY2 + camera.y && p1Y <= camWindowY1 + camera.y)
 	{
 		stopPlayer2Y = -1;
 	}

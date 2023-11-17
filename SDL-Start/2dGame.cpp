@@ -70,6 +70,7 @@ SDL_Window* gWindow = NULL;
 SDL_Renderer* gRenderer = NULL;
 
 LTexture gCircleTexture;
+LTexture gPlayerTexture;
 LTexture gTileTexture;
 SDL_Rect gTileClips[TOTAL_TILE_SPRITES];
 
@@ -157,6 +158,15 @@ bool loadMedia(Tile* tiles[])
 	gCircleTexture.setBlendMode(SDL_BLENDMODE_BLEND);
 	gCircleTexture.setAlpha(100);
 
+	//Load player texture
+	if (!gPlayerTexture.loadFromFile("textures/sansUndertale.png", gRenderer))
+	{
+		printf("Failed to load player texture!\n");
+		success = false;
+	}
+	gPlayerTexture.setBlendMode(SDL_BLENDMODE_BLEND);
+	//gPlayerTexture.setAlpha(100);
+
 	if (!gTileTexture.loadFromFile("textures/tiles.png", gRenderer))
 	{
 		printf("Failed to load tile set texture!\n");
@@ -186,6 +196,7 @@ void close(Tile* tiles[])
 
 	//Free loaded images
 	gCircleTexture.free();
+	gPlayerTexture.free();
 	gTileTexture.free();
 
 	//Destroy window	
@@ -385,6 +396,14 @@ int main(int argc, char* args[])
 			circle.setCirclePosX(circle.getCirclePosX() + (gCircleTexture.getWidth() / 2));
 			circle.setCirclePosY(circle.getCirclePosY() + (gCircleTexture.getHeight() / 2));
 
+			//Scale the player texture and update the position accordingly
+			gPlayerTexture.setWidth(gCircleTexture.getWidth() / 3);
+			gPlayerTexture.setHeight(gCircleTexture.getHeight() / 3);
+			square.setSquarePosX(circle.getCirclePosX() + (gCircleTexture.getWidth() / 2));
+			square.setSquarePosY(circle.getCirclePosY() + (gCircleTexture.getHeight() / 2));
+			square.setPlayerWidth(gPlayerTexture.getWidth());
+			square.setPlayerHeight(gPlayerTexture.getHeight());
+
 			//Main loop flag
 			bool quit = false;
 
@@ -421,7 +440,7 @@ int main(int argc, char* args[])
 				//Choosing which camera option to use
 				//camera.positionLockEdgeSnappingCamera(circle.getCirclePosX(), circle.getCirclePosY());
 				//camera.positionLockCameraWindow(circle.getCirclePosX(), circle.getCirclePosY());
-				camera.twoPlayersCameraWindow(circle.getCirclePosX(), circle.getCirclePosY(), square.getSquarePosX(), square.getSquarePosY(), square.getSquareSize());
+				camera.twoPlayersCameraWindow(circle.getCirclePosX(), circle.getCirclePosY(), square.getSquarePosX(), square.getSquarePosY(), square.getPlayerWidth(), square.getPlayerHeight());
 
 				//Clear screen
 				SDL_SetRenderDrawColor(gRenderer, 0x00, 0xFF, 0xFF, 0xFF);
@@ -434,9 +453,10 @@ int main(int argc, char* args[])
 				}
 
 				//Render square
-				SDL_Rect fillRect = { square.getSquarePosX() - camera.camera.x, square.getSquarePosY() - camera.camera.y, square.getSquareSize(), square.getSquareSize()};
+				/*SDL_Rect fillRect = { square.getSquarePosX() - camera.camera.x, square.getSquarePosY() - camera.camera.y, square.getSquareSize(), square.getSquareSize()};
 				SDL_SetRenderDrawColor(gRenderer, 0xFF, 0x00, 0x00, 0xFF);
-				SDL_RenderFillRect(gRenderer, &fillRect);
+				SDL_RenderFillRect(gRenderer, &fillRect);*/
+				gPlayerTexture.render(gRenderer, square.getSquarePosX() - (gPlayerTexture.getWidth() / 2) - camera.camera.x, square.getSquarePosY() - (gPlayerTexture.getHeight() / 2) - camera.camera.y);
 
 				//Render semi-translucent circle
 				gCircleTexture.render(gRenderer, circle.getCirclePosX() - (gCircleTexture.getWidth() / 2) - camera.camera.x, circle.getCirclePosY() - (gCircleTexture.getHeight() / 2) - camera.camera.y);

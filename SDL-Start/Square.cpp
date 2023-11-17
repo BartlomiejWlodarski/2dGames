@@ -23,6 +23,26 @@ void Square::setSquareSize(int value)
 	this->squareSize = value;
 }
 
+int Square::getPlayerWidth()
+{
+	return this->playerWidth;
+}
+
+void Square::setPlayerWidth(int value)
+{
+	this->playerWidth = value;
+}
+
+int Square::getPlayerHeight()
+{
+	return this->playerHeight;
+}
+
+void Square::setPlayerHeight(int value)
+{
+	this->playerHeight = value;
+}
+
 int Square::getSquarePosX()
 {
 	return this->squarePosX;
