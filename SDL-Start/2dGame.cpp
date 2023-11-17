@@ -149,14 +149,14 @@ bool loadMedia(Tile* tiles[])
 	bool success = true;
 
 	//Load dot texture
-	if (!gCircleTexture.loadFromFile("textures/circlepng.png", gRenderer))
+	if (!gCircleTexture.loadFromFile("textures/amongus.png", gRenderer))
 	{
 		printf("Failed to load dot texture!\n");
 		success = false;
 	}
 
 	gCircleTexture.setBlendMode(SDL_BLENDMODE_BLEND);
-	gCircleTexture.setAlpha(100);
+	//gCircleTexture.setAlpha(100);
 
 	//Load player texture
 	if (!gPlayerTexture.loadFromFile("textures/sansUndertale.png", gRenderer))
@@ -391,14 +391,14 @@ int main(int argc, char* args[])
 		else
 		{
 			//Scale the circle texture and update the position accordingly
-			gCircleTexture.setWidth(gCircleTexture.getWidth() / 10);
-			gCircleTexture.setHeight(gCircleTexture.getHeight() / 10);
+			gCircleTexture.setWidth(gCircleTexture.getWidth() / 5);
+			gCircleTexture.setHeight(gCircleTexture.getHeight() / 5);
 			circle.setCirclePosX(circle.getCirclePosX() + (gCircleTexture.getWidth() / 2));
 			circle.setCirclePosY(circle.getCirclePosY() + (gCircleTexture.getHeight() / 2));
 
 			//Scale the player texture and update the position accordingly
-			gPlayerTexture.setWidth(gCircleTexture.getWidth() / 3);
-			gPlayerTexture.setHeight(gCircleTexture.getHeight() / 3);
+			gPlayerTexture.setWidth(gPlayerTexture.getWidth() / 8);
+			gPlayerTexture.setHeight(gPlayerTexture.getHeight() / 8);
 			square.setSquarePosX(circle.getCirclePosX() + (gCircleTexture.getWidth() / 2));
 			square.setSquarePosY(circle.getCirclePosY() + (gCircleTexture.getHeight() / 2));
 			square.setPlayerWidth(gPlayerTexture.getWidth());
