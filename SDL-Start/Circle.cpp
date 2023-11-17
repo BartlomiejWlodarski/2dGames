@@ -85,12 +85,13 @@ float Circle::roundToUpper(float a)
 	return a;
 }
 
-void Circle::moveCircle(int textureWidth, int textureHeight, int stopCircleX, int stopCircleY)
+void Circle::moveCircle(int textureWidth, int textureHeight, int stopX, int stopY)
 {
+	checkCameraWindow(stopX, stopY);
 	if (abs(circlePosX - circleDesX) > abs(circleVelStepX)) {
 		circlePosX += (int)circleVelStepX;
 	}
-
+	
 	if ((circlePosX - textureWidth / 2 < 0) || (circlePosX + textureWidth/2 > LEVEL_WIDTH))
 	{
 		//Move back
@@ -108,7 +109,7 @@ void Circle::moveCircle(int textureWidth, int textureHeight, int stopCircleX, in
 	}
 }
 
-void Circle::playerKeyPressed(int textureWidth, int textureHeight, int camX, int camY, int* stopCircleX, int* stopCircleY)
+void Circle::playerKeyPressed(int textureWidth, int textureHeight, int camX, int camY)
 {
 	SDL_GetMouseState(&circleDesX, &circleDesY);
 	circleDesX += camX;	
@@ -120,22 +121,45 @@ void Circle::playerKeyPressed(int textureWidth, int textureHeight, int camX, int
 	circleVelStepY = (float)((float)(circleDesY - circlePosY) / 200);
 	circleVelStepY = roundToUpper(circleVelStepY);
 	std::cout << "Mouse clicked at position: x - " << circleDesX << "; y - " << circleDesY << "\n";
-	if (circleDesX < circlePosX && *stopCircleX == 1)
+	if (circleDesX - circlePosX > 0)
 	{
-		circleDesX = circlePosX;
+		right = true;
+		left = false;
 	}
-	if (circleDesX >= circlePosX && *stopCircleX == -1)
+	else {
+		right = false;
+		left = true;
+	}
+	if (circleDesY - circlePosY > 0)
 	{
-		circleDesX = circlePosX;
+		down = true;
+		up = false;
+	}
+	else {
+		down = false;
+		up = true;
 	}
 
-	if (circleDesY < circlePosY && *stopCircleY == 1)
+}
+
+void Circle::checkCameraWindow(int stopX, int stopY)
+{
+	if (stopY == 1 && up)
 	{
 		circleDesY = circlePosY;
 	}
-	if (circleDesY >= circlePosY && *stopCircleY == -1)
+	else if (stopY == -1 && down)
 	{
 		circleDesY = circlePosY;
+	}
+	
+	if (stopX == 1 && left)
+	{
+		circleDesX = circlePosX;
+	}
+	else if (stopX == -1 && right)
+	{
+		circleDesX = circlePosX;
 	}
 }
 

@@ -221,7 +221,7 @@ void handleEvent(SDL_Event& e, int camX, int camY)
 	}
 	if (e.type == SDL_MOUSEBUTTONDOWN)
 	{
-		circle.playerKeyPressed(gCircleTexture.getWidth(), gCircleTexture.getHeight(), camX, camY, &stopCircleX, &stopCircleY);
+		circle.playerKeyPressed(gCircleTexture.getWidth(), gCircleTexture.getHeight(), camX, camY);
 	}
 }
 
@@ -412,11 +412,11 @@ void twoPlayersCameraWindow(int* camX, int* camY, int* camW, int* camH)
 	stopSquareY = 0;
 
 	//Camera window horizontally
-	if (circle.getCirclePosX() < camWindowX1 + *camX && square.getSquarePosX() < camWindowX2 + *camX)
+	if (circle.getCirclePosX() < camWindowX1 + *camX && square.getSquarePosX() + square.getSquareSize() < camWindowX2 + *camX)
 	{
 		*camX += circle.getCirclePosX() - (camWindowX1 + *camX);
 	}
-	else if(circle.getCirclePosX() < camWindowX1 + *camX && square.getSquarePosX() >= camWindowX2 + *camX)
+	else if(circle.getCirclePosX() < camWindowX1 + *camX && square.getSquarePosX() + square.getSquareSize() >= camWindowX2 + *camX)
 	{
 		stopCircleX = 1;
 	}
@@ -431,11 +431,11 @@ void twoPlayersCameraWindow(int* camX, int* camY, int* camW, int* camH)
 	}
 
 	//Camera window vertically
-	if (circle.getCirclePosY() < camWindowY1 + *camY && square.getSquarePosY() < camWindowY2 + *camY)
+	if (circle.getCirclePosY() < camWindowY1 + *camY && square.getSquarePosY() + square.getSquareSize() < camWindowY2 + *camY)
 	{
 		*camY += circle.getCirclePosY() - (camWindowY1 + *camY);
 	}
-	else if (circle.getCirclePosY() < camWindowY1 + *camY && square.getSquarePosY() >= camWindowY2 + *camY)
+	else if (circle.getCirclePosY() < camWindowY1 + *camY && square.getSquarePosY() + square.getSquareSize() >= camWindowY2 + *camY)
 	{
 		stopCircleY = 1;
 	}
@@ -459,11 +459,11 @@ void twoPlayersCameraWindow(int* camX, int* camY, int* camW, int* camH)
 		stopSquareX = 1;
 	}
 
-	if (square.getSquarePosX() > camWindowX2 + *camX && circle.getCirclePosX() > camWindowX1 + *camX)
+	if (square.getSquarePosX() + square.getSquareSize() > camWindowX2 + *camX && circle.getCirclePosX() > camWindowX1 + *camX)
 	{
-		*camX += square.getSquarePosX() - (camWindowX2 + *camX);
+		*camX += square.getSquarePosX() + square.getSquareSize() - (camWindowX2 + *camX);
 	}
-	else if (square.getSquarePosX() > camWindowX2 + *camX && circle.getCirclePosX() <= camWindowX1 + *camX)
+	else if (square.getSquarePosX() + square.getSquareSize() > camWindowX2 + *camX && circle.getCirclePosX() <= camWindowX1 + *camX)
 	{
 		stopSquareX = -1;
 	}
@@ -477,11 +477,11 @@ void twoPlayersCameraWindow(int* camX, int* camY, int* camW, int* camH)
 		stopSquareY = 1;
 	}
 
-	if (square.getSquarePosY() > camWindowY2 + *camY && circle.getCirclePosY() > camWindowY1 + *camY)
+	if (square.getSquarePosY() + square.getSquareSize() > camWindowY2 + *camY && circle.getCirclePosY() > camWindowY1 + *camY)
 	{
-		*camY += square.getSquarePosY() - (camWindowY2 + *camY);
+		*camY += square.getSquarePosY() + square.getSquareSize() - (camWindowY2 + *camY);
 	}
-	else if (square.getSquarePosY() > camWindowY2 + *camY && circle.getCirclePosY() <= camWindowY1 + *camY)
+	else if (square.getSquarePosY() + square.getSquareSize() > camWindowY2 + *camY && circle.getCirclePosY() <= camWindowY1 + *camY)
 	{
 		stopSquareY = -1;
 	}
