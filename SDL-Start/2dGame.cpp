@@ -11,6 +11,7 @@
 #include "Tile.h"
 #include "Square.h"
 #include "Circle.h"
+#include "Camera.h"
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 1040;
@@ -49,11 +50,6 @@ const int camWindowX1 = SCREEN_WIDTH / 4;
 const int camWindowX2 = SCREEN_WIDTH * 6 / 8;
 const int camWindowY1 = SCREEN_HEIGHT / 4;
 const int camWindowY2 = SCREEN_HEIGHT * 6 / 8;
-
-int stopCircleX = 0;
-int stopCircleY = 0;
-int stopSquareX = 0;
-int stopSquareY = 0;
 
 //Starts up SDL and creates window
 bool init();
@@ -362,130 +358,6 @@ bool setTiles(Tile* tiles[])
 	return tilesLoaded;
 }
 
-void positionLockEdgeSnappingCamera(int *camX, int *camY, int *camW, int *camH)
-{
-	//Center the camera over the dot
-	*camX = (circle.getCirclePosX()) - SCREEN_WIDTH / 2;
-	*camY = (circle.getCirclePosY()) - SCREEN_HEIGHT / 2;
-
-	//Keep the camera in bounds
-	if (*camX < 0)
-	{
-		*camX = 0;
-	}
-	if (*camY < 0)
-	{
-		*camY = 0;
-	}
-	if (*camX > LEVEL_WIDTH - *camW)
-	{
-		*camX = LEVEL_WIDTH - *camW;
-	}
-	if (*camY > LEVEL_HEIGHT - *camH)
-	{
-		*camY = LEVEL_HEIGHT - *camH;
-	}
-}
-
-void positionLockCameraWindow(int* camX, int* camY, int* camW, int* camH)
-{
-	//Lock the horizontal camera
-	*camX = (circle.getCirclePosX()) - SCREEN_WIDTH / 2;
-
-	//Camera window vertically
-	if (circle.getCirclePosY() < camLineY1 + *camY)
-	{
-		*camY += circle.getCirclePosY() - (camLineY1 + *camY);
-	}
-
-	if (circle.getCirclePosY() > camLineY2 + *camY)
-	{
-		*camY += circle.getCirclePosY() - (camLineY2 + *camY);
-	}
-}
-
-void twoPlayersCameraWindow(int* camX, int* camY, int* camW, int* camH)
-{
-	stopCircleX = 0;
-	stopCircleY = 0;
-	stopSquareX = 0;
-	stopSquareY = 0;
-
-	//Camera window horizontally
-	if (circle.getCirclePosX() < camWindowX1 + *camX && square.getSquarePosX() + square.getSquareSize() < camWindowX2 + *camX)
-	{
-		*camX += circle.getCirclePosX() - (camWindowX1 + *camX);
-	}
-	else if(circle.getCirclePosX() < camWindowX1 + *camX && square.getSquarePosX() + square.getSquareSize() >= camWindowX2 + *camX)
-	{
-		stopCircleX = 1;
-	}
-
-	if (circle.getCirclePosX() > camWindowX2 + *camX && square.getSquarePosX() > camWindowX1 + *camX)
-	{
-		*camX += circle.getCirclePosX() - (camWindowX2 + *camX);
-	}
-	else if (circle.getCirclePosX() > camWindowX2 + *camX && square.getSquarePosX() <= camWindowX1 + *camX)
-	{
-		stopCircleX = -1;
-	}
-
-	//Camera window vertically
-	if (circle.getCirclePosY() < camWindowY1 + *camY && square.getSquarePosY() + square.getSquareSize() < camWindowY2 + *camY)
-	{
-		*camY += circle.getCirclePosY() - (camWindowY1 + *camY);
-	}
-	else if (circle.getCirclePosY() < camWindowY1 + *camY && square.getSquarePosY() + square.getSquareSize() >= camWindowY2 + *camY)
-	{
-		stopCircleY = 1;
-	}
-
-	if (circle.getCirclePosY() > camWindowY2 + *camY && square.getSquarePosY() > camWindowY1 + *camY)
-	{
-		*camY += circle.getCirclePosY() - (camWindowY2 + *camY);
-	}
-	else if (circle.getCirclePosY() > camWindowY2 + *camY && square.getSquarePosY() <= camWindowY1 + *camY)
-	{
-		stopCircleY = -1;
-	}
-
-	//Camera window horizontally
-	if (square.getSquarePosX() < camWindowX1 + *camX && circle.getCirclePosX() < camWindowX2 + *camX)
-	{
-		*camX += square.getSquarePosX() - (camWindowX1 + *camX);
-	}
-	else if (square.getSquarePosX() < camWindowX1 + *camX && circle.getCirclePosX() >= camWindowX2 + *camX)
-	{
-		stopSquareX = 1;
-	}
-
-	if (square.getSquarePosX() + square.getSquareSize() > camWindowX2 + *camX && circle.getCirclePosX() > camWindowX1 + *camX)
-	{
-		*camX += square.getSquarePosX() + square.getSquareSize() - (camWindowX2 + *camX);
-	}
-	else if (square.getSquarePosX() + square.getSquareSize() > camWindowX2 + *camX && circle.getCirclePosX() <= camWindowX1 + *camX)
-	{
-		stopSquareX = -1;
-	}
-	//Camera window vertically
-	if (square.getSquarePosY() < camWindowY1 + *camY && circle.getCirclePosY() < camWindowY2 + *camY)
-	{
-		*camY += square.getSquarePosY() - (camWindowY1 + *camY);
-	}
-	else if (square.getSquarePosY() < camWindowY1 + *camY && circle.getCirclePosY() >= camWindowY2 + *camY)
-	{
-		stopSquareY = 1;
-	}
-
-	if (square.getSquarePosY() + square.getSquareSize() > camWindowY2 + *camY && circle.getCirclePosY() > camWindowY1 + *camY)
-	{
-		*camY += square.getSquarePosY() + square.getSquareSize() - (camWindowY2 + *camY);
-	}
-	else if (square.getSquarePosY() + square.getSquareSize() > camWindowY2 + *camY && circle.getCirclePosY() <= camWindowY1 + *camY)
-	{
-		stopSquareY = -1;
-	}
-}
 
 int main(int argc, char* args[])
 {
@@ -520,13 +392,13 @@ int main(int argc, char* args[])
 			SDL_Event e;
 
 			//The camera area
-			SDL_Rect camera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
+			Camera camera(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 			//Reset vertical camera for positionLockCameraWindow
-			camera.y = (circle.getCirclePosY()) - SCREEN_HEIGHT / 2;
+			camera.camera.y = (circle.getCirclePosY()) - SCREEN_HEIGHT / 2;
 
 			//Reset vertical camera for twoPlayersCameraWindow
-			camera.x = (circle.getCirclePosX()) - SCREEN_WIDTH / 2;
+			camera.camera.x = (circle.getCirclePosX()) - SCREEN_WIDTH / 2;
 
 			//While application is running
 			while (!quit)
@@ -539,17 +411,17 @@ int main(int argc, char* args[])
 					{
 						quit = true;
 					}
-					handleEvent(e, camera.x, camera.y);
+					handleEvent(e, camera.camera.x, camera.camera.y);
 				}
 				
 				//Move objects
-				square.moveSquare(stopSquareX, stopSquareY);
-				circle.moveCircle(gCircleTexture.getWidth(), gCircleTexture.getHeight(), stopCircleX, stopCircleY);
+				square.moveSquare(camera.stopPlayer2X, camera.stopPlayer2Y);
+				circle.moveCircle(gCircleTexture.getWidth(), gCircleTexture.getHeight(), camera.stopPlayer1X, camera.stopPlayer1Y);
 
 				//Choosing which camera option to use
-				//positionLockEdgeSnappingCamera(&camera.x, &camera.y, &camera.w, &camera.h);
-				//positionLockCameraWindow(&camera.x, &camera.y, &camera.w, &camera.h);
-				twoPlayersCameraWindow(&camera.x, &camera.y, &camera.w, &camera.h);
+				//camera.positionLockEdgeSnappingCamera(circle.getCirclePosX(), circle.getCirclePosY());
+				//camera.positionLockCameraWindow(circle.getCirclePosX(), circle.getCirclePosY());
+				camera.twoPlayersCameraWindow(circle.getCirclePosX(), circle.getCirclePosY(), square.getSquarePosX(), square.getSquarePosY(), square.getSquareSize());
 
 				//Clear screen
 				SDL_SetRenderDrawColor(gRenderer, 0x00, 0xFF, 0xFF, 0xFF);
@@ -558,16 +430,16 @@ int main(int argc, char* args[])
 				//Render level
 				for (int i = 0; i < TOTAL_TILES; ++i)
 				{
-					renderTile(tileSet[i], camera);
+					renderTile(tileSet[i], camera.camera);
 				}
 
 				//Render square
-				SDL_Rect fillRect = { square.getSquarePosX() - camera.x, square.getSquarePosY() - camera.y, square.getSquareSize(), square.getSquareSize()};
+				SDL_Rect fillRect = { square.getSquarePosX() - camera.camera.x, square.getSquarePosY() - camera.camera.y, square.getSquareSize(), square.getSquareSize()};
 				SDL_SetRenderDrawColor(gRenderer, 0xFF, 0x00, 0x00, 0xFF);
 				SDL_RenderFillRect(gRenderer, &fillRect);
 
 				//Render semi-translucent circle
-				gCircleTexture.render(gRenderer, circle.getCirclePosX() - (gCircleTexture.getWidth() / 2) - camera.x, circle.getCirclePosY() - (gCircleTexture.getHeight() / 2) - camera.y);
+				gCircleTexture.render(gRenderer, circle.getCirclePosX() - (gCircleTexture.getWidth() / 2) - camera.camera.x, circle.getCirclePosY() - (gCircleTexture.getHeight() / 2) - camera.camera.y);
 
 				//Render square
 				SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xFF);
