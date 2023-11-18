@@ -90,7 +90,7 @@ void Player1::movePlayer1(int stopX, int stopY)
 	player1PosX += player1VelX;
 
 	//If the dot went too far to the left or right
-	if ((player1PosX < 0) || (player1PosX + player1Size > LEVEL_WIDTH))
+	if ((player1PosX - player1Width / 2 < 0) || (player1PosX + player1Width / 2 > LEVEL_WIDTH))
 	{
 		//Move back
 		player1PosX -= player1VelX;
@@ -100,7 +100,7 @@ void Player1::movePlayer1(int stopX, int stopY)
 	player1PosY += player1VelY;
 
 	//If the dot went too far up or down
-	if ((player1PosY < 0) || (player1PosY + player1Size > LEVEL_HEIGHT))
+	if ((player1PosY - player1Height / 2 < 0) || (player1PosY + player1Height / 2 > LEVEL_HEIGHT))
 	{
 		//Move back
 		player1PosY -= player1VelY;
