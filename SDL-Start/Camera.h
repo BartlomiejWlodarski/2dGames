@@ -29,7 +29,7 @@ public:
 	Camera(int x, int y, int screen_w, int screen_h);
 	void positionLockEdgeSnappingCamera(int playerX, int playerY);
 	void positionLockCameraWindow(int playerX, int playerY);
-	void twoPlayersCameraWindow(int p1X, int p1Y, int p2X, int p2Y, int p2width, int p2height);
+	void twoPlayersCameraWindow(int p2X, int p2Y, int p1X, int p1Y);
 
 
 };

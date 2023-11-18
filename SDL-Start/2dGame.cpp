@@ -9,8 +9,8 @@
 
 #include "LTexture.h"
 #include "Tile.h"
-#include "Square.h"
-#include "Circle.h"
+#include "Player1.h"
+#include "Player2.h"
 #include "Camera.h"
 
 //Screen dimension constants
@@ -69,16 +69,16 @@ SDL_Window* gWindow = NULL;
 //The window renderer
 SDL_Renderer* gRenderer = NULL;
 
-LTexture gCircleTexture;
-LTexture gPlayerTexture;
+LTexture gPlayer2Texture;
+LTexture gPlayer1Texture;
 LTexture gTileTexture;
 SDL_Rect gTileClips[TOTAL_TILE_SPRITES];
 
-//Square constants and variables
-Square square(LEVEL_WIDTH, LEVEL_HEIGHT, 500, 500);
+//Player1 constants and variables
+Player1 player1(LEVEL_WIDTH, LEVEL_HEIGHT, 500, 500);
 
-//Circle constants and variables
-Circle circle(LEVEL_WIDTH, LEVEL_HEIGHT, 600, 500);
+//Player2 constants and variables
+Player2 player2(LEVEL_WIDTH, LEVEL_HEIGHT, 600, 500);
 
 void renderTile(Tile* tile, SDL_Rect& camera)
 {
@@ -149,23 +149,23 @@ bool loadMedia(Tile* tiles[])
 	bool success = true;
 
 	//Load dot texture
-	if (!gCircleTexture.loadFromFile("textures/amongus.png", gRenderer))
+	if (!gPlayer2Texture.loadFromFile("textures/amongus.png", gRenderer))
 	{
 		printf("Failed to load dot texture!\n");
 		success = false;
 	}
 
-	gCircleTexture.setBlendMode(SDL_BLENDMODE_BLEND);
-	//gCircleTexture.setAlpha(100);
+	gPlayer2Texture.setBlendMode(SDL_BLENDMODE_BLEND);
+	//gPlayer2Texture.setAlpha(100);
 
 	//Load player texture
-	if (!gPlayerTexture.loadFromFile("textures/sansUndertale.png", gRenderer))
+	if (!gPlayer1Texture.loadFromFile("textures/sansUndertale.png", gRenderer))
 	{
 		printf("Failed to load player texture!\n");
 		success = false;
 	}
-	gPlayerTexture.setBlendMode(SDL_BLENDMODE_BLEND);
-	//gPlayerTexture.setAlpha(100);
+	gPlayer1Texture.setBlendMode(SDL_BLENDMODE_BLEND);
+	//gPlayer1Texture.setAlpha(100);
 
 	if (!gTileTexture.loadFromFile("textures/tiles.png", gRenderer))
 	{
@@ -195,8 +195,8 @@ void close(Tile* tiles[])
 	}
 
 	//Free loaded images
-	gCircleTexture.free();
-	gPlayerTexture.free();
+	gPlayer2Texture.free();
+	gPlayer1Texture.free();
 	gTileTexture.free();
 
 	//Destroy window	
@@ -216,19 +216,19 @@ void handleEvent(SDL_Event& e, int camX, int camY)
 	if (e.type == SDL_KEYDOWN && e.key.repeat == 0)
 	{
 		//Adjust the velocity
-		square.playerKeyPressed(e.key.keysym.sym);
-		//std::cout << "SquarePosX: " << squarePosX << "; SquarePosY: " << squarePosY << "; SquareVelX: " << squareVelX << "; SquareVelY: " << squareVelY << "\n";
+		player1.playerKeyPressed(e.key.keysym.sym);
+		//std::cout << "Player1PosX: " << player1PosX << "; Player1PosY: " << player1PosY << "; Player1VelX: " << player1VelX << "; Player1VelY: " << player1VelY << "\n";
 	}
 	//If a key was released
 	else if (e.type == SDL_KEYUP && e.key.repeat == 0)
 	{
 		//Adjust the velocity
-		square.playerKeyReleased(e.key.keysym.sym);
-		//std::cout << "SquarePosX: " << squarePosX << "; SquarePosY: " << squarePosY << "; SquareVelX: " << squareVelX << "; SquareVelY: " << squareVelY << "\n";
+		player1.playerKeyReleased(e.key.keysym.sym);
+		//std::cout << "Player1PosX: " << player1PosX << "; Player1PosY: " << player1PosY << "; Player1VelX: " << player1VelX << "; Player1VelY: " << player1VelY << "\n";
 	}
 	if (e.type == SDL_MOUSEBUTTONDOWN)
 	{
-		circle.playerKeyPressed(gCircleTexture.getWidth(), gCircleTexture.getHeight(), camX, camY);
+		player2.playerKeyPressed(gPlayer2Texture.getWidth(), gPlayer2Texture.getHeight(), camX, camY);
 	}
 }
 
@@ -390,19 +390,19 @@ int main(int argc, char* args[])
 		}
 		else
 		{
-			//Scale the circle texture and update the position accordingly
-			gCircleTexture.setWidth(gCircleTexture.getWidth() / 5);
-			gCircleTexture.setHeight(gCircleTexture.getHeight() / 5);
-			circle.setCirclePosX(circle.getCirclePosX() + (gCircleTexture.getWidth() / 2));
-			circle.setCirclePosY(circle.getCirclePosY() + (gCircleTexture.getHeight() / 2));
+			//Scale the player2 texture and update the position accordingly
+			gPlayer2Texture.setWidth(gPlayer2Texture.getWidth() / 5);
+			gPlayer2Texture.setHeight(gPlayer2Texture.getHeight() / 5);
+			player2.setPlayer2PosX(player2.getPlayer2PosX() + (gPlayer2Texture.getWidth() / 2));
+			player2.setPlayer2PosY(player2.getPlayer2PosY() + (gPlayer2Texture.getHeight() / 2));
 
 			//Scale the player texture and update the position accordingly
-			gPlayerTexture.setWidth(gPlayerTexture.getWidth() / 8);
-			gPlayerTexture.setHeight(gPlayerTexture.getHeight() / 8);
-			square.setSquarePosX(circle.getCirclePosX() + (gCircleTexture.getWidth() / 2));
-			square.setSquarePosY(circle.getCirclePosY() + (gCircleTexture.getHeight() / 2));
-			square.setPlayerWidth(gPlayerTexture.getWidth());
-			square.setPlayerHeight(gPlayerTexture.getHeight());
+			gPlayer1Texture.setWidth(gPlayer1Texture.getWidth() / 8);
+			gPlayer1Texture.setHeight(gPlayer1Texture.getHeight() / 8);
+			player1.setPlayer1PosX(player2.getPlayer2PosX() + (gPlayer2Texture.getWidth() / 2));
+			player1.setPlayer1PosY(player2.getPlayer2PosY() + (gPlayer2Texture.getHeight() / 2));
+			player1.setPlayer1Width(gPlayer1Texture.getWidth());
+			player1.setPlayer1Height(gPlayer1Texture.getHeight());
 
 			//Main loop flag
 			bool quit = false;
@@ -414,10 +414,10 @@ int main(int argc, char* args[])
 			Camera camera(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 			//Reset vertical camera for positionLockCameraWindow
-			camera.camera.y = (circle.getCirclePosY()) - SCREEN_HEIGHT / 2;
+			camera.camera.y = (player2.getPlayer2PosY()) - SCREEN_HEIGHT / 2;
 
 			//Reset vertical camera for twoPlayersCameraWindow
-			camera.camera.x = (circle.getCirclePosX()) - SCREEN_WIDTH / 2;
+			camera.camera.x = (player2.getPlayer2PosX()) - SCREEN_WIDTH / 2;
 
 			//While application is running
 			while (!quit)
@@ -434,13 +434,13 @@ int main(int argc, char* args[])
 				}
 				
 				//Move objects
-				square.moveSquare(camera.stopPlayer2X, camera.stopPlayer2Y);
-				circle.moveCircle(gCircleTexture.getWidth(), gCircleTexture.getHeight(), camera.stopPlayer1X, camera.stopPlayer1Y);
+				player1.movePlayer1(camera.stopPlayer1X, camera.stopPlayer1Y);
+				player2.movePlayer2(gPlayer2Texture.getWidth(), gPlayer2Texture.getHeight(), camera.stopPlayer2X, camera.stopPlayer2Y);
 
 				//Choosing which camera option to use
-				//camera.positionLockEdgeSnappingCamera(circle.getCirclePosX(), circle.getCirclePosY());
-				//camera.positionLockCameraWindow(circle.getCirclePosX(), circle.getCirclePosY());
-				camera.twoPlayersCameraWindow(circle.getCirclePosX(), circle.getCirclePosY(), square.getSquarePosX(), square.getSquarePosY(), square.getPlayerWidth(), square.getPlayerHeight());
+				//camera.positionLockEdgeSnappingCamera(player2.getPlayer2PosX(), player2.getPlayer2PosY());
+				//camera.positionLockCameraWindow(player2.getPlayer2PosX(), player2.getPlayer2PosY());
+				camera.twoPlayersCameraWindow(player2.getPlayer2PosX(), player2.getPlayer2PosY(), player1.getPlayer1PosX(), player1.getPlayer1PosY());
 
 				//Clear screen
 				SDL_SetRenderDrawColor(gRenderer, 0x00, 0xFF, 0xFF, 0xFF);
@@ -452,23 +452,23 @@ int main(int argc, char* args[])
 					renderTile(tileSet[i], camera.camera);
 				}
 
-				//Render square
-				/*SDL_Rect fillRect = { square.getSquarePosX() - camera.camera.x, square.getSquarePosY() - camera.camera.y, square.getSquareSize(), square.getSquareSize()};
+				//Render player1
+				/*SDL_Rect fillRect = { player1.getPlayer1PosX() - camera.camera.x, player1.getPlayer1PosY() - camera.camera.y, player1.getPlayer1Size(), player1.getPlayer1Size()};
 				SDL_SetRenderDrawColor(gRenderer, 0xFF, 0x00, 0x00, 0xFF);
 				SDL_RenderFillRect(gRenderer, &fillRect);*/
-				gPlayerTexture.render(gRenderer, square.getSquarePosX() - (gPlayerTexture.getWidth() / 2) - camera.camera.x, square.getSquarePosY() - (gPlayerTexture.getHeight() / 2) - camera.camera.y);
+				gPlayer1Texture.render(gRenderer, player1.getPlayer1PosX() - (gPlayer1Texture.getWidth() / 2) - camera.camera.x, player1.getPlayer1PosY() - (gPlayer1Texture.getHeight() / 2) - camera.camera.y);
 
-				//Render semi-translucent circle
-				gCircleTexture.render(gRenderer, circle.getCirclePosX() - (gCircleTexture.getWidth() / 2) - camera.camera.x, circle.getCirclePosY() - (gCircleTexture.getHeight() / 2) - camera.camera.y);
+				//Render semi-translucent player2
+				gPlayer2Texture.render(gRenderer, player2.getPlayer2PosX() - (gPlayer2Texture.getWidth() / 2) - camera.camera.x, player2.getPlayer2PosY() - (gPlayer2Texture.getHeight() / 2) - camera.camera.y);
 
-				//Render square
+				//Render player1
 				SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xFF);
 
 				//Render line that allows to see the boundaries of camera in positionLockCameraWindow
 				//SDL_RenderDrawLine(gRenderer, camLineX1, camLineY1, camLineX2, camLineY2);
 
 				//Render rectangle that allows to see the boundaries of camera in twoPlayersCameraWindow
-				//Render square
+				//Render player1
 				
 
 				//Render line that allows to see the boundaries of camera in positionLockCameraWindow

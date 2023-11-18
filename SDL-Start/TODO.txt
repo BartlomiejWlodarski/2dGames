@@ -1,4 +1,2 @@
 Fix twoPlayerCameraWindow:
 - add 2nd camera for 2 players
-- find 2nd sprite
-- rename square/circle to player1/player2
