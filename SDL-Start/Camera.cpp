@@ -132,3 +132,18 @@ void Camera::twoPlayersCameraWindow(int p2X, int p2Y, int p1X, int p1Y)
 		stopPlayer1Y = -1;
 	}
 }
+
+void Camera::centerCameraZoom(int p1X, int p1Y, int p2X, int p2Y, float* scale)
+{
+	
+	float distance = sqrt(pow(p1X - p2X, 2) + pow(p1Y - p2Y, 2));
+	float maxDistance = sqrt(pow(camera.w * 2 / 4, 2) + pow(camera.h * 2 / 4, 2));
+	if (distance > maxDistance)
+	{
+		*scale = maxDistance / distance;
+	}
+	camera.x = (p2X + (p1X - p2X) / 2) - (camera.w / 2) * (1/ *scale);
+	camera.y = (p2Y + (p1Y - p2Y) / 2) - (camera.h / 2) * (1 / *scale);
+
+	
+}

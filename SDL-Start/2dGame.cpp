@@ -51,6 +51,8 @@ const int camWindowX2 = SCREEN_WIDTH * 6 / 8;
 const int camWindowY1 = SCREEN_HEIGHT / 4;
 const int camWindowY2 = SCREEN_HEIGHT * 6 / 8;
 
+float scale = 1;
+
 //Starts up SDL and creates window
 bool init();
 
@@ -228,7 +230,7 @@ void handleEvent(SDL_Event& e, int camX, int camY)
 	}
 	if (e.type == SDL_MOUSEBUTTONDOWN)
 	{
-		player2.playerKeyPressed(gPlayer2Texture.getWidth(), gPlayer2Texture.getHeight(), camX, camY);
+		player2.playerKeyPressed(gPlayer2Texture.getWidth(), gPlayer2Texture.getHeight(), camX, camY, scale);
 	}
 }
 
@@ -372,7 +374,6 @@ bool setTiles(Tile* tiles[])
 
 int main(int argc, char* args[])
 {
-
 	//Start up SDL and create window
 	if (!init())
 	{
@@ -422,6 +423,7 @@ int main(int argc, char* args[])
 			//While application is running
 			while (!quit)
 			{
+				SDL_RenderSetScale(gRenderer, scale, scale);
 				//Handle events on queue
 				while (SDL_PollEvent(&e) != 0)
 				{
@@ -440,7 +442,8 @@ int main(int argc, char* args[])
 				//Choosing which camera option to use
 				//camera.positionLockEdgeSnappingCamera(player2.getPlayer2PosX(), player2.getPlayer2PosY());
 				//camera.positionLockCameraWindow(player2.getPlayer2PosX(), player2.getPlayer2PosY());
-				camera.twoPlayersCameraWindow(player2.getPlayer2PosX(), player2.getPlayer2PosY(), player1.getPlayer1PosX(), player1.getPlayer1PosY());
+				//camera.twoPlayersCameraWindow(player2.getPlayer2PosX(), player2.getPlayer2PosY(), player1.getPlayer1PosX(), player1.getPlayer1PosY());
+				camera.centerCameraZoom(player1.getPlayer1PosX(), player1.getPlayer1PosY(), player2.getPlayer2PosX(), player2.getPlayer2PosY(), &scale);
 
 				//Clear screen
 				SDL_SetRenderDrawColor(gRenderer, 0x00, 0xFF, 0xFF, 0xFF);
@@ -472,10 +475,15 @@ int main(int argc, char* args[])
 				
 
 				//Render line that allows to see the boundaries of camera in positionLockCameraWindow
-				SDL_RenderDrawLine(gRenderer, camWindowX1, camWindowY1, camWindowX2, camWindowY1);
-				SDL_RenderDrawLine(gRenderer, camWindowX2, camWindowY1, camWindowX2, camWindowY2);
-				SDL_RenderDrawLine(gRenderer, camWindowX2, camWindowY2, camWindowX1, camWindowY2);
-				SDL_RenderDrawLine(gRenderer, camWindowX1, camWindowY2, camWindowX1, camWindowY1);
+				//SDL_RenderDrawLine(gRenderer, camWindowX1, camWindowY1, camWindowX2, camWindowY1);
+				//SDL_RenderDrawLine(gRenderer, camWindowX2, camWindowY1, camWindowX2, camWindowY2);
+				//SDL_RenderDrawLine(gRenderer, camWindowX2, camWindowY2, camWindowX1, camWindowY2);
+				//SDL_RenderDrawLine(gRenderer, camWindowX1, camWindowY2, camWindowX1, camWindowY1);
+
+				//Render line and center for center camera zoom				
+				SDL_RenderDrawLine(gRenderer, player1.getPlayer1PosX() - camera.camera.x, player1.getPlayer1PosY() - camera.camera.y, player2.getPlayer2PosX() - camera.camera.x, player2.getPlayer2PosY() - camera.camera.y);
+				SDL_RenderDrawLine(gRenderer, (camera.camera.w/2 - 100) * (1 / scale), (camera.camera.h / 2) * (1 / scale), (camera.camera.w / 2 + 100) * (1 / scale), (camera.camera.h / 2) * (1 / scale));
+				SDL_RenderDrawLine(gRenderer, (camera.camera.w / 2) * (1 / scale), (camera.camera.h / 2 - 100) * (1 / scale), (camera.camera.w / 2) * (1 / scale), (camera.camera.h / 2 + 100) * (1 / scale));
 
 				//Update screen
 				SDL_RenderPresent(gRenderer);

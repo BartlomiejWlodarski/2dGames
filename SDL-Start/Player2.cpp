@@ -109,9 +109,15 @@ void Player2::movePlayer2(int textureWidth, int textureHeight, int stopX, int st
 	}
 }
 
-void Player2::playerKeyPressed(int textureWidth, int textureHeight, int camX, int camY)
+void Player2::playerKeyPressed(int textureWidth, int textureHeight, int camX, int camY, float scale)
 {
 	SDL_GetMouseState(&player2DesX, &player2DesY);
+	if (scale < 1)
+	{
+		player2DesX *= 1 / scale;
+		player2DesY *= 1 / scale;
+	}
+
 	player2DesX += camX;	
 	player2DesY += camY;
 	/*player2DesX -= textureWidth / 2;

@@ -39,7 +39,7 @@ public:
 	void setPlayer2DesY(int value);
 	float roundToUpper(float a);
 	void movePlayer2(int textureWidth, int textureHeight, int stopX, int stopY);
-	void playerKeyPressed(int textureWidth, int textureHeight, int camX, int camY);
+	void playerKeyPressed(int textureWidth, int textureHeight, int camX, int camY, float scale);
 	void checkCameraWindow(int stopX, int stopY);
 };
 

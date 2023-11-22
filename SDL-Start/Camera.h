@@ -30,7 +30,7 @@ public:
 	void positionLockEdgeSnappingCamera(int playerX, int playerY);
 	void positionLockCameraWindow(int playerX, int playerY);
 	void twoPlayersCameraWindow(int p2X, int p2Y, int p1X, int p1Y);
-
+	void centerCameraZoom(int p1X, int p1Y, int p2X, int p2Y, float* scale);
 
 };
 

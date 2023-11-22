@@ -1,2 +1,3 @@
 Fix twoPlayerCameraWindow:
-- add 2nd camera for 2 players
+- add 2nd camera for 2 players (WIP)
+	- fix player2 mouseClick destination
