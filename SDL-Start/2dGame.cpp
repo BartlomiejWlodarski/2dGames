@@ -53,6 +53,8 @@ const int camWindowY2 = SCREEN_HEIGHT * 6 / 8;
 
 float scale = 1;
 
+int cameraOption;
+
 //Starts up SDL and creates window
 bool init();
 
@@ -215,7 +217,12 @@ void close(Tile* tiles[])
 void handleEvent(SDL_Event& e, int camX, int camY)
 {
 	//If a key was pressed
-	if (e.type == SDL_KEYDOWN && e.key.repeat == 0)
+	if (e.type == SDL_KEYDOWN && e.key.repeat == 0 && e.key.keysym.sym == SDLK_TAB)
+	{
+		cameraOption += 1;
+		cameraOption %= 4;
+	}
+	else if (e.type == SDL_KEYDOWN && e.key.repeat == 0)
 	{
 		//Adjust the velocity
 		player1.playerKeyPressed(e.key.keysym.sym);
@@ -228,10 +235,14 @@ void handleEvent(SDL_Event& e, int camX, int camY)
 		player1.playerKeyReleased(e.key.keysym.sym);
 		//std::cout << "Player1PosX: " << player1PosX << "; Player1PosY: " << player1PosY << "; Player1VelX: " << player1VelX << "; Player1VelY: " << player1VelY << "\n";
 	}
+
+
+	//If mouse button was pressed
 	if (e.type == SDL_MOUSEBUTTONDOWN)
 	{
 		player2.playerKeyPressed(gPlayer2Texture.getWidth(), gPlayer2Texture.getHeight(), camX, camY, scale);
 	}
+	
 }
 
 bool setTiles(Tile* tiles[])
@@ -372,6 +383,48 @@ bool setTiles(Tile* tiles[])
 }
 
 
+void cameraMenu(Camera *camera)
+{
+	switch (cameraOption)
+	{
+	case 0:
+		camera->stopPlayer1X = 0;
+		camera->stopPlayer1Y = 0;
+		camera->stopPlayer2X = 0;
+		camera->stopPlayer2Y = 0;
+		camera->positionLockEdgeSnappingCamera(player2.getPlayer2PosX(), player2.getPlayer2PosY());
+		break;
+	case 1:
+		camera->stopPlayer1X = 0;
+		camera->stopPlayer1Y = 0;
+		camera->stopPlayer2X = 0;
+		camera->stopPlayer2Y = 0;
+		camera->positionLockCameraWindow(player2.getPlayer2PosX(), player2.getPlayer2PosY());
+		//Render line that allows to see the boundaries of camera in positionLockCameraWindow
+		SDL_RenderDrawLine(gRenderer, camLineX1, camLineY1, camLineX2, camLineY2);
+		break;
+	case 2:
+		camera->twoPlayersCameraWindow(player2.getPlayer2PosX(), player2.getPlayer2PosY(), player1.getPlayer1PosX(), player1.getPlayer1PosY());
+		//Render line that allows to see the boundaries of camera in twoPlayersCameraWindow
+		SDL_RenderDrawLine(gRenderer, camWindowX1, camWindowY1, camWindowX2, camWindowY1);
+		SDL_RenderDrawLine(gRenderer, camWindowX2, camWindowY1, camWindowX2, camWindowY2);
+		SDL_RenderDrawLine(gRenderer, camWindowX2, camWindowY2, camWindowX1, camWindowY2);
+		SDL_RenderDrawLine(gRenderer, camWindowX1, camWindowY2, camWindowX1, camWindowY1);
+		break;
+	case 3:
+		camera->stopPlayer1X = 0;
+		camera->stopPlayer1Y = 0;
+		camera->stopPlayer2X = 0;
+		camera->stopPlayer2Y = 0;
+		camera->centerCameraZoom(player1.getPlayer1PosX(), player1.getPlayer1PosY(), player2.getPlayer2PosX(), player2.getPlayer2PosY(), &scale);
+		//Render line and center for center camera zoom				
+		SDL_RenderDrawLine(gRenderer, player1.getPlayer1PosX() - camera->camera.x, player1.getPlayer1PosY() - camera->camera.y, player2.getPlayer2PosX() - camera->camera.x, player2.getPlayer2PosY() - camera->camera.y);
+		SDL_RenderDrawLine(gRenderer, (camera->camera.w / 2 - 100) * (1 / scale), (camera->camera.h / 2) * (1 / scale), (camera->camera.w / 2 + 100) * (1 / scale), (camera->camera.h / 2) * (1 / scale));
+		SDL_RenderDrawLine(gRenderer, (camera->camera.w / 2) * (1 / scale), (camera->camera.h / 2 - 100) * (1 / scale), (camera->camera.w / 2) * (1 / scale), (camera->camera.h / 2 + 100) * (1 / scale));
+		break;
+	}
+}
+
 int main(int argc, char* args[])
 {
 	//Start up SDL and create window
@@ -439,12 +492,6 @@ int main(int argc, char* args[])
 				player1.movePlayer1(camera.stopPlayer1X, camera.stopPlayer1Y);
 				player2.movePlayer2(gPlayer2Texture.getWidth(), gPlayer2Texture.getHeight(), camera.stopPlayer2X, camera.stopPlayer2Y);
 
-				//Choosing which camera option to use
-				//camera.positionLockEdgeSnappingCamera(player2.getPlayer2PosX(), player2.getPlayer2PosY());
-				//camera.positionLockCameraWindow(player2.getPlayer2PosX(), player2.getPlayer2PosY());
-				//camera.twoPlayersCameraWindow(player2.getPlayer2PosX(), player2.getPlayer2PosY(), player1.getPlayer1PosX(), player1.getPlayer1PosY());
-				camera.centerCameraZoom(player1.getPlayer1PosX(), player1.getPlayer1PosY(), player2.getPlayer2PosX(), player2.getPlayer2PosY(), &scale);
-
 				//Clear screen
 				SDL_SetRenderDrawColor(gRenderer, 0x00, 0xFF, 0xFF, 0xFF);
 				SDL_RenderClear(gRenderer);
@@ -456,34 +503,14 @@ int main(int argc, char* args[])
 				}
 
 				//Render player1
-				/*SDL_Rect fillRect = { player1.getPlayer1PosX() - camera.camera.x, player1.getPlayer1PosY() - camera.camera.y, player1.getPlayer1Size(), player1.getPlayer1Size()};
-				SDL_SetRenderDrawColor(gRenderer, 0xFF, 0x00, 0x00, 0xFF);
-				SDL_RenderFillRect(gRenderer, &fillRect);*/
 				gPlayer1Texture.render(gRenderer, player1.getPlayer1PosX() - (gPlayer1Texture.getWidth() / 2) - camera.camera.x, player1.getPlayer1PosY() - (gPlayer1Texture.getHeight() / 2) - camera.camera.y);
 
-				//Render semi-translucent player2
+				//Render player2
 				gPlayer2Texture.render(gRenderer, player2.getPlayer2PosX() - (gPlayer2Texture.getWidth() / 2) - camera.camera.x, player2.getPlayer2PosY() - (gPlayer2Texture.getHeight() / 2) - camera.camera.y);
-
-				//Render player1
-				SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xFF);
-
-				//Render line that allows to see the boundaries of camera in positionLockCameraWindow
-				//SDL_RenderDrawLine(gRenderer, camLineX1, camLineY1, camLineX2, camLineY2);
-
-				//Render rectangle that allows to see the boundaries of camera in twoPlayersCameraWindow
-				//Render player1
 				
-
-				//Render line that allows to see the boundaries of camera in positionLockCameraWindow
-				//SDL_RenderDrawLine(gRenderer, camWindowX1, camWindowY1, camWindowX2, camWindowY1);
-				//SDL_RenderDrawLine(gRenderer, camWindowX2, camWindowY1, camWindowX2, camWindowY2);
-				//SDL_RenderDrawLine(gRenderer, camWindowX2, camWindowY2, camWindowX1, camWindowY2);
-				//SDL_RenderDrawLine(gRenderer, camWindowX1, camWindowY2, camWindowX1, camWindowY1);
-
-				//Render line and center for center camera zoom				
-				SDL_RenderDrawLine(gRenderer, player1.getPlayer1PosX() - camera.camera.x, player1.getPlayer1PosY() - camera.camera.y, player2.getPlayer2PosX() - camera.camera.x, player2.getPlayer2PosY() - camera.camera.y);
-				SDL_RenderDrawLine(gRenderer, (camera.camera.w/2 - 100) * (1 / scale), (camera.camera.h / 2) * (1 / scale), (camera.camera.w / 2 + 100) * (1 / scale), (camera.camera.h / 2) * (1 / scale));
-				SDL_RenderDrawLine(gRenderer, (camera.camera.w / 2) * (1 / scale), (camera.camera.h / 2 - 100) * (1 / scale), (camera.camera.w / 2) * (1 / scale), (camera.camera.h / 2 + 100) * (1 / scale));
+				SDL_SetRenderDrawColor(gRenderer, 0xFF, 0x00, 0x00, 0xFF);
+				//Choosing which camera option to use
+				cameraMenu(&camera);
 
 				//Update screen
 				SDL_RenderPresent(gRenderer);
