@@ -112,19 +112,19 @@ void Player1::playerKeyPressed(SDL_Keycode sym)
 {
 	switch (sym)
 	{
-	case SDLK_UP: player1VelY -= (player1VelStep * (1 - smooth)) + (player1VelY * smooth);
+	case SDLK_w: player1VelY -= (player1VelStep * (1 - smooth)) + (player1VelY * smooth);
 		std::cout << "Up arrow pressed" << "\n";
 		up = true;
 		break;
-	case SDLK_DOWN: player1VelY += (player1VelStep * (1 - smooth)) + (player1VelY * smooth);
+	case SDLK_s: player1VelY += (player1VelStep * (1 - smooth)) + (player1VelY * smooth);
 		std::cout << "Down arrow pressed" << "\n";
 		down = true;
 		break;
-	case SDLK_LEFT: player1VelX -= (player1VelStep * (1 - smooth)) + (player1VelX * smooth);
+	case SDLK_a: player1VelX -= (player1VelStep * (1 - smooth)) + (player1VelX * smooth);
 		std::cout << "Left arrow pressed" << "\n";
 		left = true;
 		break;
-	case SDLK_RIGHT: player1VelX += (player1VelStep * (1 - smooth)) + (player1VelX * smooth);
+	case SDLK_d: player1VelX += (player1VelStep * (1 - smooth)) + (player1VelX * smooth);
 		std::cout << "Right arrow pressed" << "\n";
 		right = true;
 		break;
@@ -135,19 +135,19 @@ void Player1::playerKeyReleased(SDL_Keycode sym)
 {
 	switch (sym)
 	{
-	case SDLK_UP: player1VelY = 0;
+	case SDLK_w: player1VelY = 0;
 		std::cout << "Up arrow released" << "\n";
 		up = false;
 		break;
-	case SDLK_DOWN: player1VelY = 0;
+	case SDLK_s: player1VelY = 0;
 		std::cout << "Down arrow released" << "\n";
 		down = false;
 		break;
-	case SDLK_LEFT: player1VelX = 0;
+	case SDLK_a: player1VelX = 0;
 		std::cout << "Left arrow released" << "\n";
 		left = false;
 		break;
-	case SDLK_RIGHT: player1VelX = 0;
+	case SDLK_d: player1VelX = 0;
 		std::cout << "Right arrow released" << "\n";
 		right = false;
 		break;

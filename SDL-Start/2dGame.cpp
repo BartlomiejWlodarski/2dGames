@@ -12,6 +12,7 @@
 #include "Player1.h"
 #include "Player2.h"
 #include "Camera.h"
+#include "Circle.h"
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 1040;
@@ -76,6 +77,7 @@ SDL_Renderer* gRenderer = NULL;
 LTexture gPlayer2Texture;
 LTexture gPlayer1Texture;
 LTexture gTileTexture;
+LTexture gCircleTexture;
 SDL_Rect gTileClips[TOTAL_TILE_SPRITES];
 
 //Player1 constants and variables
@@ -152,23 +154,32 @@ bool loadMedia(Tile* tiles[])
 	//Loading success flag
 	bool success = true;
 
-	//Load dot texture
+	//Load player2 texture
 	if (!gPlayer2Texture.loadFromFile("textures/amongus.png", gRenderer))
 	{
-		printf("Failed to load dot texture!\n");
+		printf("Failed to load player2 texture!\n");
 		success = false;
 	}
 
 	gPlayer2Texture.setBlendMode(SDL_BLENDMODE_BLEND);
 	//gPlayer2Texture.setAlpha(100);
 
-	//Load player texture
+	//Load player1 texture
 	if (!gPlayer1Texture.loadFromFile("textures/sansUndertale.png", gRenderer))
+	{
+		printf("Failed to load player1 texture!\n");
+		success = false;
+	}
+	gPlayer1Texture.setBlendMode(SDL_BLENDMODE_BLEND);
+	//gPlayer1Texture.setAlpha(100);
+
+	//Load player texture
+	if (!gCircleTexture.loadFromFile("textures/circleReduced.png", gRenderer))
 	{
 		printf("Failed to load player texture!\n");
 		success = false;
 	}
-	gPlayer1Texture.setBlendMode(SDL_BLENDMODE_BLEND);
+	gCircleTexture.setBlendMode(SDL_BLENDMODE_BLEND);
 	//gPlayer1Texture.setAlpha(100);
 
 	if (!gTileTexture.loadFromFile("textures/tiles.png", gRenderer))
@@ -458,6 +469,10 @@ int main(int argc, char* args[])
 			player1.setPlayer1Width(gPlayer1Texture.getWidth());
 			player1.setPlayer1Height(gPlayer1Texture.getHeight());
 
+			//Scale the circle texture and update the position accordingly
+			gCircleTexture.setWidth(gCircleTexture.getWidth() / 12);
+			gCircleTexture.setHeight(gCircleTexture.getHeight() / 12);
+
 			//Main loop flag
 			bool quit = false;
 
@@ -472,6 +487,14 @@ int main(int argc, char* args[])
 
 			//Reset vertical camera for twoPlayersCameraWindow
 			camera.camera.x = (player2.getPlayer2PosX()) - SCREEN_WIDTH / 2;
+
+			//Initialize balls
+			Circle balls[10];
+			int numberOfBalls = 10;
+			for (int i = 0; i < numberOfBalls; i++)
+			{
+				balls[i] = Circle();
+			}
 
 			//While application is running
 			while (!quit)
@@ -492,6 +515,11 @@ int main(int argc, char* args[])
 				player1.movePlayer1(camera.stopPlayer1X, camera.stopPlayer1Y);
 				player2.movePlayer2(gPlayer2Texture.getWidth(), gPlayer2Texture.getHeight(), camera.stopPlayer2X, camera.stopPlayer2Y);
 
+				for (int i = 0; i < numberOfBalls; i++)
+				{
+					balls[i].moveCircle(gCircleTexture.getWidth(), gCircleTexture.getHeight(), balls, numberOfBalls, camera);
+				}
+
 				//Clear screen
 				SDL_SetRenderDrawColor(gRenderer, 0x00, 0xFF, 0xFF, 0xFF);
 				SDL_RenderClear(gRenderer);
@@ -508,6 +536,14 @@ int main(int argc, char* args[])
 				//Render player2
 				gPlayer2Texture.render(gRenderer, player2.getPlayer2PosX() - (gPlayer2Texture.getWidth() / 2) - camera.camera.x, player2.getPlayer2PosY() - (gPlayer2Texture.getHeight() / 2) - camera.camera.y);
 				
+				for (int i = 0; i < 10; i++)
+				{
+					gCircleTexture.render(gRenderer, balls[i].getCirclePosX() - (gCircleTexture.getWidth() / 2) - camera.camera.x, balls[i].getCirclePosY() - (gCircleTexture.getHeight() / 2) - camera.camera.y);
+				}
+				//Render player2
+				gPlayer2Texture.render(gRenderer, player2.getPlayer2PosX() - (gPlayer2Texture.getWidth() / 2) - camera.camera.x, player2.getPlayer2PosY() - (gPlayer2Texture.getHeight() / 2) - camera.camera.y);
+
+
 				SDL_SetRenderDrawColor(gRenderer, 0xFF, 0x00, 0x00, 0xFF);
 				//Choosing which camera option to use
 				cameraMenu(&camera);
