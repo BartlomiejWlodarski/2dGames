@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <iostream>
 #include "Camera.h"
+#include <vector>
 
 class Circle
 {
@@ -35,10 +36,10 @@ public:
 	void setCirclePosX(int value);
 	int getCirclePosY();
 	void setCirclePosY(int value);
-	int getCircleVelX();
-	void setCircleVelX(int value);
-	int getCircleVelY();
-	void setCircleVelY(int value);
+	float getCircleVelX();
+	void setCircleVelX(float value);
+	float getCircleVelY();
+	void setCircleVelY(float value);
 	int getCircleDesX();
 	void setCircleDesX(int value);
 	int getCircleDesY();
@@ -54,5 +55,6 @@ public:
 	void circlesCollision();
 	void checkCameraWindow(int stopX, int stopY);
 	void separate(Circle ball, int diameter);
+	void reflection(Circle ball, int diameter, float separation_x, float separation_y, std::vector <float> v);
 	void reflection(Circle ball, int diameter);
 };

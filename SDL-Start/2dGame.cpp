@@ -511,12 +511,22 @@ int main(int argc, char* args[])
 			camera.camera.x = (player2.getPlayer2PosX()) - SCREEN_WIDTH / 2;
 
 			//Initialize balls
-			Circle balls[4];
-			int numberOfBalls = 4;
+			Circle balls[2];
+			int numberOfBalls =2;
 			for (int i = 0; i < numberOfBalls; i++)
 			{
 				balls[i] = Circle();
 			}
+			balls[0].setCirclePosX(100);
+			balls[1].setCirclePosX(600);
+			balls[0].setCirclePosY(100);
+			balls[1].setCirclePosY(100);
+
+			balls[0].setCircleVelX(0.25);
+			balls[1].setCircleVelX(-0.25);
+
+			balls[0].setCircleVelX(0);
+			balls[1].setCircleVelX(0);
 
 			//While application is running
 			while (!quit)
@@ -540,6 +550,7 @@ int main(int argc, char* args[])
 				for (int i = 0; i < numberOfBalls; i++)
 				{
 					balls[i].setSeparation(separation);
+					balls[i].setBallCollision(ballCollision);
 					balls[i].moveCircle(i, gCircleTexture.getWidth(), gCircleTexture.getHeight(), balls, numberOfBalls, camera);
 				}
 
@@ -559,7 +570,7 @@ int main(int argc, char* args[])
 				//Render player2
 				gPlayer2Texture.render(gRenderer, player2.getPlayer2PosX() - (gPlayer2Texture.getWidth() / 2) - camera.camera.x, player2.getPlayer2PosY() - (gPlayer2Texture.getHeight() / 2) - camera.camera.y);
 				
-				for (int i = 0; i < 10; i++)
+				for (int i = 0; i < numberOfBalls; i++)
 				{
 					gCircleTexture.render(gRenderer, balls[i].getCirclePosX() - (gCircleTexture.getWidth() / 2) - camera.camera.x, balls[i].getCirclePosY() - (gCircleTexture.getHeight() / 2) - camera.camera.y);
 				}
