@@ -15,7 +15,6 @@
 #include "Circle.h"
 #include <ctime>
 #include <cstdlib>
-#include <vector>
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 1040;
@@ -556,17 +555,9 @@ int main(int argc, char* args[])
 
 				for (int i = 0; i < numberOfBalls; i++)
 				{
-					std::vector <float> result;
-					int indexResult;
 					balls[i].setSeparation(separation);
 					balls[i].setBallCollision(ballCollision);
-					balls[i].moveCircle(i, gCircleTexture.getWidth(), gCircleTexture.getHeight(), balls, numberOfBalls, camera, &result, &indexResult);
-					if (ballCollision && separation && result.size() == 2)
-					{
-						balls[indexResult].setCircleVelX(result[0]);
-						balls[indexResult].setCircleVelY(result[1]);
-					}
-
+					balls[i].moveCircle(i, gCircleTexture.getWidth(), gCircleTexture.getHeight(), balls, numberOfBalls, camera);
 				}
 
 				//Clear screen
