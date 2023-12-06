@@ -10,8 +10,7 @@ class Circle
 private:
 	int circlePosX;
 	int circlePosY;
-	float circlePosXfloat;
-	float circlePosYfloat;
+
 	float circleVelX = 0.1;
 	float circleVelY = 0.1;
 	int circleDesX;
@@ -31,6 +30,9 @@ private:
 	bool ballCollision;
 
 public:
+	float circlePosXfloat;
+	float circlePosYfloat;
+
 	Circle();
 	int getCirclePosX();
 	void setCirclePosX(int value);
@@ -49,12 +51,12 @@ public:
 	bool getBallCollision();
 	void setBallCollision(bool value);
 	float roundToUpper(float a);
-	void moveCircle(int index, int textureWidth, int textureHeight, Circle balls[], int numberOfBalls, Camera camera);
-	void checkCollision(int index, int textureWidth, int textureHeight, Circle balls[], int numberOfBalls, Camera camera);
+	void moveCircle(int index, int textureWidth, int textureHeight, Circle balls[], int numberOfBalls, Camera camera, std::vector <float> *result, int *indexResult);
+	void checkCollision(int index, int textureWidth, int textureHeight, Circle balls[], int numberOfBalls, Camera camera, std::vector <float>* result, int* indexResult);
 	void screenEdgeCollision();
 	void circlesCollision();
 	void checkCameraWindow(int stopX, int stopY);
-	void separate(Circle ball, int diameter);
-	void reflection(Circle ball, int diameter, float separation_x, float separation_y, std::vector <float> v);
+	void separate(Circle ball, int diameter, std::vector <float>* result);
+	void reflection(Circle ball, int diameter, float separation_x, float separation_y, std::vector <float> v, std::vector <float> *result);
 	void reflection(Circle ball, int diameter);
 };

@@ -15,6 +15,7 @@
 #include "Circle.h"
 #include <ctime>
 #include <cstdlib>
+#include <vector>
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 1040;
@@ -517,16 +518,22 @@ int main(int argc, char* args[])
 			{
 				balls[i] = Circle();
 			}
-			balls[0].setCirclePosX(100);
-			balls[1].setCirclePosX(600);
-			balls[0].setCirclePosY(100);
-			balls[1].setCirclePosY(100);
+			balls[0].setCirclePosX(300);
+			balls[0].circlePosXfloat = 300;
+			balls[1].setCirclePosX(900);
+			balls[1].circlePosXfloat = 900;
+			balls[0].setCirclePosY(500);
+			balls[0].circlePosYfloat = 500;
+			balls[1].setCirclePosY(500);
+			balls[1].circlePosYfloat = 500;
 
 			balls[0].setCircleVelX(0.25);
 			balls[1].setCircleVelX(-0.25);
 
-			balls[0].setCircleVelX(0);
-			balls[1].setCircleVelX(0);
+			balls[0].setCircleVelY(0);
+			balls[1].setCircleVelY(0);
+			
+			balls[1].setCircleVelY(0);
 
 			//While application is running
 			while (!quit)
@@ -549,9 +556,17 @@ int main(int argc, char* args[])
 
 				for (int i = 0; i < numberOfBalls; i++)
 				{
+					std::vector <float> result;
+					int indexResult;
 					balls[i].setSeparation(separation);
 					balls[i].setBallCollision(ballCollision);
-					balls[i].moveCircle(i, gCircleTexture.getWidth(), gCircleTexture.getHeight(), balls, numberOfBalls, camera);
+					balls[i].moveCircle(i, gCircleTexture.getWidth(), gCircleTexture.getHeight(), balls, numberOfBalls, camera, &result, &indexResult);
+					if (ballCollision && separation && result.size() == 2)
+					{
+						balls[indexResult].setCircleVelX(result[0]);
+						balls[indexResult].setCircleVelY(result[1]);
+					}
+
 				}
 
 				//Clear screen
