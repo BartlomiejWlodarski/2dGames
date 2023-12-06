@@ -26,6 +26,8 @@ private:
 	bool left;
 	bool right;
 
+	bool separation;
+	bool ballCollision;
 
 public:
 	Circle();
@@ -41,10 +43,16 @@ public:
 	void setCircleDesX(int value);
 	int getCircleDesY();
 	void setCircleDesY(int value);
+	bool getSeparation();
+	void setSeparation(bool value);
+	bool getBallCollision();
+	void setBallCollision(bool value);
 	float roundToUpper(float a);
-	void moveCircle(int textureWidth, int textureHeight, Circle balls[], int numberOfBalls, Camera camera);
-	void checkCollision(int textureWidth, int textureHeight, Circle balls[], int numberOfBalls, Camera camera);
+	void moveCircle(int index, int textureWidth, int textureHeight, Circle balls[], int numberOfBalls, Camera camera);
+	void checkCollision(int index, int textureWidth, int textureHeight, Circle balls[], int numberOfBalls, Camera camera);
 	void screenEdgeCollision();
 	void circlesCollision();
 	void checkCameraWindow(int stopX, int stopY);
+	void separate(Circle ball, int diameter);
+	void reflection(Circle ball, int diameter);
 };

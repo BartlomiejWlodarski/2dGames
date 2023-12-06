@@ -13,6 +13,8 @@
 #include "Player2.h"
 #include "Camera.h"
 #include "Circle.h"
+#include <ctime>
+#include <cstdlib>
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 1040;
@@ -55,6 +57,8 @@ const int camWindowY2 = SCREEN_HEIGHT * 6 / 8;
 float scale = 1;
 
 int cameraOption;
+bool separation;
+bool ballCollision;
 
 //Starts up SDL and creates window
 bool init();
@@ -246,13 +250,25 @@ void handleEvent(SDL_Event& e, int camX, int camY)
 		player1.playerKeyReleased(e.key.keysym.sym);
 		//std::cout << "Player1PosX: " << player1PosX << "; Player1PosY: " << player1PosY << "; Player1VelX: " << player1VelX << "; Player1VelY: " << player1VelY << "\n";
 	}
+	if (e.type == SDL_KEYDOWN && e.key.repeat == 0 && e.key.keysym.sym == SDLK_p) 
+	{
+		
+		separation = !separation;
+		std::cout << "Separation: " << to_string(separation) << "\n";
+	}
+	if (e.type == SDL_KEYDOWN && e.key.repeat == 0 && e.key.keysym.sym == SDLK_o)
+	{
 
-
+		ballCollision = !ballCollision;
+		std::cout << "Ball collision: " << to_string(ballCollision) << "\n";
+	}
+		
 	//If mouse button was pressed
 	if (e.type == SDL_MOUSEBUTTONDOWN)
 	{
 		player2.playerKeyPressed(gPlayer2Texture.getWidth(), gPlayer2Texture.getHeight(), camX, camY, scale);
 	}
+
 	
 }
 
@@ -436,8 +452,14 @@ void cameraMenu(Camera *camera)
 	}
 }
 
+void checkBallsCollision()
+{
+
+}
+
 int main(int argc, char* args[])
 {
+	srand(time(0));
 	//Start up SDL and create window
 	if (!init())
 	{
@@ -489,8 +511,8 @@ int main(int argc, char* args[])
 			camera.camera.x = (player2.getPlayer2PosX()) - SCREEN_WIDTH / 2;
 
 			//Initialize balls
-			Circle balls[10];
-			int numberOfBalls = 10;
+			Circle balls[4];
+			int numberOfBalls = 4;
 			for (int i = 0; i < numberOfBalls; i++)
 			{
 				balls[i] = Circle();
@@ -517,7 +539,8 @@ int main(int argc, char* args[])
 
 				for (int i = 0; i < numberOfBalls; i++)
 				{
-					balls[i].moveCircle(gCircleTexture.getWidth(), gCircleTexture.getHeight(), balls, numberOfBalls, camera);
+					balls[i].setSeparation(separation);
+					balls[i].moveCircle(i, gCircleTexture.getWidth(), gCircleTexture.getHeight(), balls, numberOfBalls, camera);
 				}
 
 				//Clear screen
