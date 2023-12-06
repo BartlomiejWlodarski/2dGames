@@ -32,6 +32,7 @@ private:
 public:
 	float circlePosXfloat;
 	float circlePosYfloat;
+	bool hasReflected;
 
 	Circle();
 	int getCirclePosX();
@@ -56,7 +57,7 @@ public:
 	void screenEdgeCollision();
 	void circlesCollision();
 	void checkCameraWindow(int stopX, int stopY);
-	void separate(Circle ball, int diameter);
-	void reflection(Circle ball, int diameter, float separation_x, float separation_y, std::vector <float> v);
+	void separate(Circle& ball, int diameter);
+	void reflection(Circle& ball, int diameter, float separation_x, float separation_y, std::vector <float> v);
 	void reflection(Circle ball, int diameter);
 };

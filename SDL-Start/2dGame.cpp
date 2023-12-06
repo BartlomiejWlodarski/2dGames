@@ -521,8 +521,8 @@ int main(int argc, char* args[])
 			balls[0].circlePosXfloat = 300;
 			balls[1].setCirclePosX(900);
 			balls[1].circlePosXfloat = 900;
-			balls[0].setCirclePosY(500);
-			balls[0].circlePosYfloat = 500;
+			balls[0].setCirclePosY(562);
+			balls[0].circlePosYfloat = 562;
 			balls[1].setCirclePosY(500);
 			balls[1].circlePosYfloat = 500;
 
