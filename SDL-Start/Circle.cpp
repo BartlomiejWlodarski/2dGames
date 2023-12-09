@@ -112,7 +112,6 @@ void Circle::moveCircle(int index, int textureWidth, int textureHeight, Circle b
 	circlePosX = (int)circlePosXfloat;
 	circlePosY = (int)circlePosYfloat;
 	checkCollision(index, textureWidth, textureHeight, balls, numberOfBalls, camera);
-	hasReflected = false;
 }
 
 void Circle::checkCollision(int index, int textureWidth, int textureHeight, Circle balls[], int numberOfBalls, Camera camera)
@@ -149,20 +148,30 @@ void Circle::checkCollision(int index, int textureWidth, int textureHeight, Circ
 	for (int i = 0; i < numberOfBalls; i++)
 	{
 		//if (abs(circlePosX - balls[i].getCirclePosX()) < textureWidth && abs(circlePosY - balls[i].getCirclePosY()) < textureHeight && i != index)
-		if (sqrt(float(pow((circlePosX - balls[i].getCirclePosX()), 2) + pow((circlePosY - balls[i].getCirclePosY()), 2))) < (float)textureWidth  && i != index)
+		if (sqrt(float(pow((circlePosX - balls[i].getCirclePosX()), 2) + pow((circlePosY - balls[i].getCirclePosY()), 2))) < (float)textureWidth)
 
 		{
-			float left = sqrt(float(pow((circlePosX - balls[i].getCirclePosX()), 2) + pow((circlePosY - balls[i].getCirclePosY()), 2)));
-			float right = (float)textureWidth;
-			//std::cout << "COLLISION" << std::endl;
-			if (separation)
+			if (index != i)
 			{
-				separate(balls[i], textureWidth);
+				float left = sqrt(float(pow((circlePosX - balls[i].getCirclePosX()), 2) + pow((circlePosY - balls[i].getCirclePosY()), 2)));
+				float right = (float)textureWidth;
+				//std::cout << "COLLISION" << std::endl;
+				if (separation && !hasReflected && !balls[i].hasReflected)
+				{
+					separate(balls[i], textureWidth);
+				}
+				else if (ballCollision)
+				{
+					reflection(balls[i], textureWidth);
+				}
 			}
-			else if (ballCollision)
-			{
-				reflection(balls[i], textureWidth);
-			}
+			
+		}
+		else
+		{
+			// Set the reflection flag for both circles
+			hasReflected = false;
+			balls[i].hasReflected = false;
 		}
 	}
 
@@ -255,30 +264,28 @@ void Circle::reflection(Circle& ball, int diameter, float separation_x, float se
 
 		if (v[0] > 0)
 		{
-			setCircleVelX(getCircleVelX() + tmpX);
-			ball.setCircleVelX(ball.getCircleVelX() - tmpX);
+			setCircleVelX(-(getCircleVelX() + tmpX));
+			ball.setCircleVelX(-(ball.getCircleVelX()) + tmpX);
 		}
 		else {
-			setCircleVelX(getCircleVelX() - tmpX);
-			ball.setCircleVelX(ball.getCircleVelX() + tmpX);
+			setCircleVelX(-(getCircleVelX()) - tmpX);
+			ball.setCircleVelX(-(ball.getCircleVelX() - tmpX));
 		}
 
 		if (v[1] > 0)
 		{
-			setCircleVelY(getCircleVelY() - tmpY);
-			ball.setCircleVelY(ball.getCircleVelY() + tmpY);
+			setCircleVelY(-(getCircleVelY() + tmpY));
+			ball.setCircleVelY(-(ball.getCircleVelY()) + tmpY);
 		}
 		else {
-			setCircleVelY(getCircleVelY() + tmpY);
-			ball.setCircleVelY(ball.getCircleVelY() - tmpY);
+			setCircleVelY(-(getCircleVelY()) - tmpY);
+			ball.setCircleVelY(-(ball.getCircleVelY() - tmpY));
 		}
 
 		// Set the reflection flag for both circles
 		hasReflected = true;
 		ball.hasReflected = true;
 	}
-	
-
 }
 
 void Circle::reflection(Circle ball, int diameter)

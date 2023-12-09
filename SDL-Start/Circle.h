@@ -32,7 +32,7 @@ private:
 public:
 	float circlePosXfloat;
 	float circlePosYfloat;
-	bool hasReflected;
+	bool hasReflected = false;
 
 	Circle();
 	int getCirclePosX();

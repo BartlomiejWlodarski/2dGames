@@ -57,8 +57,8 @@ const int camWindowY2 = SCREEN_HEIGHT * 6 / 8;
 float scale = 1;
 
 int cameraOption;
-bool separation;
-bool ballCollision;
+bool separation = true;
+bool ballCollision = true;
 
 //Starts up SDL and creates window
 bool init();
