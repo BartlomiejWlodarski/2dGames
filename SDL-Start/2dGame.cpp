@@ -492,8 +492,8 @@ int main(int argc, char* args[])
 			player1.setPlayer1Height(gPlayer1Texture.getHeight());
 
 			//Scale the circle texture and update the position accordingly
-			gCircleTexture.setWidth(gCircleTexture.getWidth() / 12);
-			gCircleTexture.setHeight(gCircleTexture.getHeight() / 12);
+			gCircleTexture.setWidth(gCircleTexture.getWidth() / 24);
+			gCircleTexture.setHeight(gCircleTexture.getHeight() / 24);
 
 			//Main loop flag
 			bool quit = false;
@@ -511,28 +511,28 @@ int main(int argc, char* args[])
 			camera.camera.x = (player2.getPlayer2PosX()) - SCREEN_WIDTH / 2;
 
 			//Initialize balls
-			Circle balls[5];
-			int numberOfBalls =5;
+			Circle balls[10];
+			int numberOfBalls =10;
 			for (int i = 0; i < numberOfBalls; i++)
 			{
 				balls[i] = Circle();
 			}
-			balls[0].setCirclePosX(300);
-			balls[0].circlePosXfloat = 300;
-			balls[1].setCirclePosX(900);
-			balls[1].circlePosXfloat = 900;
-			balls[0].setCirclePosY(562);
-			balls[0].circlePosYfloat = 562;
-			balls[1].setCirclePosY(500);
-			balls[1].circlePosYfloat = 500;
+			//balls[0].setCirclePosX(300);
+			//balls[0].circlePosXfloat = 300;
+			//balls[1].setCirclePosX(900);
+			//balls[1].circlePosXfloat = 900;
+			//balls[0].setCirclePosY(562);
+			//balls[0].circlePosYfloat = 562;
+			//balls[1].setCirclePosY(500);
+			//balls[1].circlePosYfloat = 500;
 
-			balls[0].setCircleVelX(0.25);
-			balls[1].setCircleVelX(-0.25);
+			//balls[0].setCircleVelX(0.25);
+			//balls[1].setCircleVelX(-0.25);
 
-			balls[0].setCircleVelY(0);
-			balls[1].setCircleVelY(0);
-			
-			balls[1].setCircleVelY(0);
+			//balls[0].setCircleVelY(0);
+			//balls[1].setCircleVelY(0);
+			//
+			//balls[1].setCircleVelY(0);
 
 			//While application is running
 			while (!quit)
