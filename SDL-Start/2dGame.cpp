@@ -511,8 +511,8 @@ int main(int argc, char* args[])
 			camera.camera.x = (player2.getPlayer2PosX()) - SCREEN_WIDTH / 2;
 
 			//Initialize balls
-			Circle balls[10];
-			int numberOfBalls =10;
+			Circle balls[5];
+			int numberOfBalls =5;
 			for (int i = 0; i < numberOfBalls; i++)
 			{
 				balls[i] = Circle();

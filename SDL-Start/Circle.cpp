@@ -222,8 +222,17 @@ void Circle::separate(Circle& ball, int diameter)
 	float vNorm = sqrt(pow(v[0], 2) + pow(v[1], 2));
 
 	float separation_x, separation_y;
-	separation_x = (v[0]) / vNorm * (diameter - vNorm);
-	separation_y = (v[1]) / vNorm * (diameter - vNorm);
+	if (vNorm == 0)
+	{
+		separation_x = 0;
+		separation_y = 0;
+	}
+	else
+	{
+		separation_x = (v[0]) / vNorm * (diameter - vNorm);
+		separation_y = (v[1]) / vNorm * (diameter - vNorm);
+	}
+
 
 	if (abs(separation_x) > 2 || (separation_y) > 2) {
 		//std::cout << "SEPARATE" << std::endl;
@@ -269,38 +278,28 @@ void Circle::reflection(Circle& ball, int diameter, float separation_x, float se
 	//if (!hasReflected && !ball.hasReflected) 
 	{
 		float dotProduct = separation_x * float(getCircleVelX()) + separation_y * float(getCircleVelY());
-		//setCircleVelX(getCircleVelX() - 2 * dotProduct * separation_x);
-		//setCircleVelY(getCircleVelY() - 2 * dotProduct * separation_y);
-		//ball.setCircleVelX(ball.getCircleVelX() - 2 * dotProduct * separation_x);
-		//ball.setCircleVelY(ball.getCircleVelY() - 2 * dotProduct * separation_y);
-		float tmpX = (2 * dotProduct * separation_x);
-		float tmpY = (2 * dotProduct * separation_y);
 
-		setCircleVelX(getCircleVelX() - tmpX);
-		ball.setCircleVelX(ball.getCircleVelX() + tmpX);
+		float vNorm = sqrt(pow(v[0], 2) + pow(v[1], 2));
 
-		setCircleVelY(getCircleVelY() - tmpY);
-		ball.setCircleVelY(ball.getCircleVelY() + tmpY);
+		float tmpX, tmpY;
+
+		if (vNorm == 0)
+		{
+			tmpX = 0;
+			tmpY = 0;
+		}
+		else
+		{
+			tmpX = 2 * dotProduct * separation_x / (vNorm * vNorm);
+			tmpY = 2 * dotProduct * separation_y / (vNorm * vNorm);
+		}
+
+		setCircleVelX(getCircleVelX() - tmpX * v[0]);
+		ball.setCircleVelX(ball.getCircleVelX() + tmpX * v[0]);
+
+		setCircleVelY(getCircleVelY() - tmpY * v[1]);
+		ball.setCircleVelY(ball.getCircleVelY() + tmpY * v[1]);
 		
-		/*if (v[0] > 0)
-		{
-			setCircleVelX(-(getCircleVelX() + tmpX));
-			ball.setCircleVelX(-(ball.getCircleVelX()) + tmpX);
-		}
-		else {
-			setCircleVelX(-(getCircleVelX()) - tmpX);
-			ball.setCircleVelX(-(ball.getCircleVelX() - tmpX));
-		}
-
-		if (v[1] > 0)
-		{
-			setCircleVelY(-(getCircleVelY() + tmpY));
-			ball.setCircleVelY(-(ball.getCircleVelY()) + tmpY);
-		}
-		else {
-			setCircleVelY(-(getCircleVelY()) - tmpY);
-			ball.setCircleVelY(-(ball.getCircleVelY() - tmpY));
-		}*/
 
 		// Set the reflection flag for both circles
 		hasReflected = true;
