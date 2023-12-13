@@ -512,16 +512,18 @@ int main(int argc, char* args[])
 			camera.camera.x = (player2.getPlayer2PosX()) - SCREEN_WIDTH / 2;
 
 			//Initialize balls
-			Circle balls[10];
-			int numberOfBalls =10;
+			Circle balls[15];
+			int numberOfBalls = 15;
 			for (int i = 0; i < numberOfBalls; i++)
 			{
 				balls[i] = Circle();
 			}
+			
+
 			//balls[0].setCirclePosX(300);
 			//balls[0].circlePosXfloat = 300;
-			//balls[1].setCirclePosX(400);
-			//balls[1].circlePosXfloat = 400;
+			//balls[1].setCirclePosX(600);
+			//balls[1].circlePosXfloat = 600;
 			//balls[0].setCirclePosY(500);
 			//balls[0].circlePosYfloat = 500;
 			//balls[1].setCirclePosY(500);
@@ -595,19 +597,19 @@ int main(int argc, char* args[])
 
 				
 
-				for (int i = 0; i < numberOfRects; i++)
-				{
-					//rects[i].setSeparation(separation);
-					//rects[i].setBallCollision(ballCollision);
-					rects[i].moveRectangle(i, rects, numberOfRects, camera);
-				}
+				//for (int i = 0; i < numberOfRects; i++)
+				//{
+				//	//rects[i].setSeparation(separation);
+				//	//rects[i].setBallCollision(ballCollision);
+				//	rects[i].moveRectangle(i, rects, numberOfRects, camera);
+				//}
 
-				for (int i = 0; i < numberOfRects; i++)
-				{
-					SDL_Rect fillRect = { rects[i].l - camera.camera.x,  rects[i].t - camera.camera.y,  rects[i].w,  rects[i].h };
-					SDL_SetRenderDrawColor(gRenderer, 0xFF, 0x00, 0x00, 0xFF);
-					SDL_RenderFillRect(gRenderer, &fillRect);
-				}
+				//for (int i = 0; i < numberOfRects; i++)
+				//{
+				//	SDL_Rect fillRect = { rects[i].l - camera.camera.x,  rects[i].t - camera.camera.y,  rects[i].w,  rects[i].h };
+				//	SDL_SetRenderDrawColor(gRenderer, 0xFF, 0x00, 0x00, 0xFF);
+				//	SDL_RenderFillRect(gRenderer, &fillRect);
+				//}
 
 
 				SDL_SetRenderDrawColor(gRenderer, 0xFF, 0x00, 0x00, 0xFF);

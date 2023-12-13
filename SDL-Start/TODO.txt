@@ -1,5 +1,3 @@
 Fix reflections:
-- Check wall collisions timing with faster balls
-//- array of hasReflected flags for each ball
-//- check collision after 1:30 min
-- Check separation not always separating enough space
+- Balls seem to slow down, could try to debug and fix or possibly rewrite the whole thing
+- Do the labyrinth

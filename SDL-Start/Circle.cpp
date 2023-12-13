@@ -7,8 +7,8 @@ Circle::Circle() : hasReflected(false)
 	circlePosY = rand() % 500 + 300;
 	circlePosXfloat = (float)circlePosX;
 	circlePosYfloat = (float)circlePosY;
-	circleVelX = (rand() % 11 - 5) / 30.0f;
-	circleVelY = (rand() % 11 - 5) / 30.0f;
+	circleVelX = (rand() % 11 - 5) / 20.0f;
+	circleVelY = (rand() % 11 - 5) / 20.0f;
 }
 
 int Circle::getCirclePosX()
@@ -217,8 +217,8 @@ void Circle::checkCameraWindow(int stopX, int stopY)
 void Circle::separate(Circle& ball, int diameter)
 {
 	std::vector <float> v;
-	v.push_back(circlePosX - ball.getCirclePosX());
-	v.push_back(circlePosY - ball.getCirclePosY());
+	v.push_back(circlePosXfloat - ball.circlePosXfloat);
+	v.push_back(circlePosYfloat - ball.circlePosYfloat);
 	float vNorm = sqrt(pow(v[0], 2) + pow(v[1], 2));
 
 	float separation_x, separation_y;
@@ -248,24 +248,35 @@ void Circle::separate(Circle& ball, int diameter)
 	}
 }
 
-void Circle::reflection(Circle& ball, int diameter, float separation_x, float separation_y, std::vector <float> v)
+void Circle::reflection(Circle& ball, int diameter, float separation_x, float separation_y, std::vector<float> v)
 {
-	float dotProduct = separation_x * getCircleVelX() + separation_y * getCircleVelY();
+	float separationNorm = sqrt(pow(separation_x, 2) + pow(separation_y, 2));
+	float v1Norm = sqrt(pow(getCircleVelX(), 2) + pow(getCircleVelY(), 2));
+	float v2Norm = sqrt(pow(ball.getCircleVelX(), 2) + pow(ball.getCircleVelY(), 2));
+	float v1x, v2x, v1y, v2y;
 
-	if (dotProduct > 0) 
-	{
-		float tmpX = 2 * dotProduct * separation_x;
-		float tmpY = 2 * dotProduct * separation_y;
 
-		// Scale down the adjustment to avoid a sudden increase in speed
-		//tmpX *= 0.5;
-		//tmpY *= 0.5;
+	if (separationNorm != 0 && v1Norm != 0 && v2Norm != 0) {
 
-		setCircleVelX(getCircleVelX() - tmpX);
-		ball.setCircleVelX(ball.getCircleVelX() + tmpX);
+		v1x = getCircleVelX() / v1Norm;
+		v2x = ball.getCircleVelX() / v1Norm;
+		v1y = getCircleVelY() / v1Norm;
+		v2y = ball.getCircleVelY() / v1Norm;
 
-		setCircleVelY(getCircleVelY() - tmpY);
-		ball.setCircleVelY(ball.getCircleVelY() + tmpY);
+		float dotProduct1 = separation_x * v1x + separation_y * v1y;
+		float dotProduct2 = separation_x * v2x + separation_y * v2y;
+
+		separation_x /= separationNorm;
+		separation_y /= separationNorm;
+
+		//if (dotProduct1 > 0) 
+		{
+			setCircleVelX(getCircleVelX() - 2 * dotProduct1 * separation_x);
+			ball.setCircleVelX(ball.getCircleVelX() - 2 * dotProduct2 * separation_x);
+
+			setCircleVelY(getCircleVelY() - 2 * dotProduct1 * separation_y);
+			ball.setCircleVelY(ball.getCircleVelY() - 2 * dotProduct2 * separation_y);
+		}
 	}
 }
 
@@ -288,21 +299,26 @@ void Circle::reflection(Circle ball, int diameter)
 		separation_y = (v[1]) / vNorm * (diameter - vNorm);
 	}
 
-	float dotProduct = separation_x * getCircleVelX() + separation_y * getCircleVelY();
-
+	float dotProduct1 = separation_x * getCircleVelX() + separation_y * getCircleVelY();
+	float dotProduct2 = separation_x * ball.getCircleVelX() + separation_y * ball.getCircleVelY();
 	//if (dotProduct > 0) 
 	{
-		float tmpX = 2 * dotProduct * separation_x;
-		float tmpY = 2 * dotProduct * separation_y;
+		float tmpX = 2 * dotProduct1 * separation_x;
+		float tmpY = 2 * dotProduct1 * separation_y;
 
 		// Scale down the adjustment to avoid a sudden increase in speed
 		//tmpX *= 0.5;
 		//tmpY *= 0.5;
 
-		setCircleVelX(getCircleVelX() - tmpX);
-		ball.setCircleVelX(ball.getCircleVelX() + tmpX);
+		//setCircleVelX(getCircleVelX() - tmpX);
+		//ball.setCircleVelX(ball.getCircleVelX() + tmpX);
 
-		setCircleVelY(getCircleVelY() - tmpY);
-		ball.setCircleVelY(ball.getCircleVelY() + tmpY);
+		//setCircleVelY(getCircleVelY() - tmpY);
+		//ball.setCircleVelY(ball.getCircleVelY() + tmpY);
+		setCircleVelX(getCircleVelX() - 2 * dotProduct1 * separation_x);
+		ball.setCircleVelX(ball.getCircleVelX() - 2 * dotProduct2 * separation_x);
+
+		setCircleVelY(getCircleVelY() - 2 * dotProduct1 * separation_y);
+		ball.setCircleVelY(ball.getCircleVelY() - 2 * dotProduct2 * separation_y);
 	}
 }
