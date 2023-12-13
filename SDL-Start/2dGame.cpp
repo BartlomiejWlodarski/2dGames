@@ -13,6 +13,7 @@
 #include "Player2.h"
 #include "Camera.h"
 #include "Circle.h"
+#include "Rectangle.h"
 #include <ctime>
 #include <cstdlib>
 
@@ -511,8 +512,8 @@ int main(int argc, char* args[])
 			camera.camera.x = (player2.getPlayer2PosX()) - SCREEN_WIDTH / 2;
 
 			//Initialize balls
-			Circle balls[20];
-			int numberOfBalls =20;
+			Circle balls[10];
+			int numberOfBalls =10;
 			for (int i = 0; i < numberOfBalls; i++)
 			{
 				balls[i] = Circle();
@@ -533,6 +534,14 @@ int main(int argc, char* args[])
 			//balls[1].setCircleVelY(0);
 			//
 			//balls[1].setCircleVelY(0);
+
+			//Initialize rects
+			Rectangle rects[5];
+			int numberOfRects = 5;
+			for (int i = 0; i < numberOfRects; i++)
+			{
+				rects[i] = Rectangle(150, 100);
+			}
 
 			//While application is running
 			while (!quit)
@@ -582,6 +591,23 @@ int main(int argc, char* args[])
 				}
 				//Render player2
 				gPlayer2Texture.render(gRenderer, player2.getPlayer2PosX() - (gPlayer2Texture.getWidth() / 2) - camera.camera.x, player2.getPlayer2PosY() - (gPlayer2Texture.getHeight() / 2) - camera.camera.y);
+
+
+				
+
+				for (int i = 0; i < numberOfRects; i++)
+				{
+					//rects[i].setSeparation(separation);
+					//rects[i].setBallCollision(ballCollision);
+					rects[i].moveRectangle(i, rects, numberOfRects, camera);
+				}
+
+				for (int i = 0; i < numberOfRects; i++)
+				{
+					SDL_Rect fillRect = { rects[i].l - camera.camera.x,  rects[i].t - camera.camera.y,  rects[i].w,  rects[i].h };
+					SDL_SetRenderDrawColor(gRenderer, 0xFF, 0x00, 0x00, 0xFF);
+					SDL_RenderFillRect(gRenderer, &fillRect);
+				}
 
 
 				SDL_SetRenderDrawColor(gRenderer, 0xFF, 0x00, 0x00, 0xFF);

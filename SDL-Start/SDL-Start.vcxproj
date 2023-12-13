@@ -138,6 +138,7 @@
     <ClCompile Include="Player2.cpp" />
     <ClCompile Include="LTexture.cpp" />
     <ClCompile Include="Player1.cpp" />
+    <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="Tile.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -146,6 +147,7 @@
     <ClInclude Include="Player2.h" />
     <ClInclude Include="LTexture.h" />
     <ClInclude Include="Player1.h" />
+    <ClInclude Include="Rectangle.h" />
     <ClInclude Include="Tile.h" />
   </ItemGroup>
   <ItemGroup>
