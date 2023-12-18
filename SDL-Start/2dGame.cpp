@@ -14,6 +14,7 @@
 #include "Camera.h"
 #include "Circle.h"
 #include "Rectangle.h"
+#include "Target.h"
 #include <ctime>
 #include <cstdlib>
 
@@ -22,28 +23,28 @@ const int SCREEN_WIDTH = 1040;
 const int SCREEN_HEIGHT = 720;
 
 //Level dimension constants
-const int LEVEL_WIDTH = 1760;
-const int LEVEL_HEIGHT = 1440;
+const int LEVEL_WIDTH = 1280;
+const int LEVEL_HEIGHT = 1280;
 
 //Tile constants
 const int TILE_WIDTH = 80;
 const int TILE_HEIGHT = 80;
-const int TOTAL_TILES = 396;
+const int TOTAL_TILES = 256;
 const int TOTAL_TILE_SPRITES = 12;
 
 //The different tile sprites
 const int TILE_DIRT = 0;
 const int TILE_GRASS = 1;
 const int TILE_STONE = 2;
-const int TILE_CENTER = 3;
-const int TILE_TOP = 4;
-const int TILE_TOPRIGHT = 5;
-const int TILE_RIGHT = 6;
-const int TILE_BOTTOMRIGHT = 7;
+const int TILE_CENTER = 7;
+const int TILE_TOP = 6;
+const int TILE_TOPRIGHT = 9;
+const int TILE_RIGHT = 10;
+const int TILE_BOTTOMRIGHT = 11;
 const int TILE_BOTTOM = 8;
-const int TILE_BOTTOMLEFT = 9;
-const int TILE_LEFT = 10;
-const int TILE_TOPLEFT = 11;
+const int TILE_BOTTOMLEFT = 5;
+const int TILE_LEFT = 4;
+const int TILE_TOPLEFT = 3;
 
 const int camLineX1 = SCREEN_WIDTH / 2;
 const int camLineY1 = SCREEN_HEIGHT / 4;
@@ -60,6 +61,8 @@ float scale = 1;
 int cameraOption;
 bool separation = false;
 bool ballCollision = false;
+
+Tile* tileSet[TOTAL_TILES];
 
 //Starts up SDL and creates window
 bool init();
@@ -83,6 +86,7 @@ LTexture gPlayer2Texture;
 LTexture gPlayer1Texture;
 LTexture gTileTexture;
 LTexture gCircleTexture;
+LTexture gTargetTexture;
 SDL_Rect gTileClips[TOTAL_TILE_SPRITES];
 
 //Player1 constants and variables
@@ -90,6 +94,8 @@ Player1 player1(LEVEL_WIDTH, LEVEL_HEIGHT, 500, 500);
 
 //Player2 constants and variables
 Player2 player2(LEVEL_WIDTH, LEVEL_HEIGHT, 600, 500);
+
+Target target(0, 0);
 
 void renderTile(Tile* tile, SDL_Rect& camera)
 {
@@ -178,13 +184,22 @@ bool loadMedia(Tile* tiles[])
 	gPlayer1Texture.setBlendMode(SDL_BLENDMODE_BLEND);
 	//gPlayer1Texture.setAlpha(100);
 
-	//Load player texture
+	//Load circle texture
 	if (!gCircleTexture.loadFromFile("textures/circleReduced.png", gRenderer))
 	{
-		printf("Failed to load player texture!\n");
+		printf("Failed to load circle texture!\n");
 		success = false;
 	}
 	gCircleTexture.setBlendMode(SDL_BLENDMODE_BLEND);
+	//gPlayer1Texture.setAlpha(100);
+
+	//Load target texture
+	if (!gTargetTexture.loadFromFile("textures/chest.png", gRenderer))
+	{
+		printf("Failed to load target texture!\n");
+		success = false;
+	}
+	gTargetTexture.setBlendMode(SDL_BLENDMODE_BLEND);
 	//gPlayer1Texture.setAlpha(100);
 
 	if (!gTileTexture.loadFromFile("textures/tiles.png", gRenderer))
@@ -282,7 +297,7 @@ bool setTiles(Tile* tiles[])
 	int x = 0, y = 0;
 
 	//Open the map
-	std::ifstream map("maps/map3.map");
+	std::ifstream map("maps/labyrinth1.map");
 
 	//If the map couldn't be loaded
 	if (map.fail())
@@ -453,10 +468,47 @@ void cameraMenu(Camera *camera)
 	}
 }
 
-void checkBallsCollision()
+void randomizeSpawnLocations(Player1 *p1, Player2 *p2, Target *t)
 {
+	bool success = false;
+	int randomTile, randomTile2, randomTile3;
+	while (!success)
+	{
+		randomTile = rand() % TOTAL_TILES;
+		if (tileSet[randomTile]->getType() < 3)
+		{
+			p1->setPlayer1PosX(tileSet[randomTile]->getBox().x + 0.5 * tileSet[randomTile]->getBox().w);
+			p1->setPlayer1PosY(tileSet[randomTile]->getBox().y + 0.5 * tileSet[randomTile]->getBox().h);
+			success = true;
+		}
+	}
 
+	success = false;
+	while (!success)
+	{
+		randomTile2 = rand() % TOTAL_TILES;
+		if (tileSet[randomTile2]->getType() < 3 && randomTile2 != randomTile)
+		{
+			p2->setPlayer2PosX(tileSet[randomTile2]->getBox().x + 0.5 * tileSet[randomTile2]->getBox().w);
+			p2->setPlayer2PosY(tileSet[randomTile2]->getBox().y + 0.5 * tileSet[randomTile2]->getBox().h);
+			success = true;
+		}
+	}
+
+	success = false;
+	while (!success)
+	{
+		randomTile3 = rand() % TOTAL_TILES;
+		if (tileSet[randomTile3]->getType() < 3 && randomTile3 != randomTile && randomTile3 != randomTile2)
+		{
+			t->xPos = (tileSet[randomTile3]->getBox().x + 0.5 * tileSet[randomTile3]->getBox().w);
+			t->yPos = (tileSet[randomTile3]->getBox().y + 0.5 * tileSet[randomTile3]->getBox().h);
+			success = true;
+		}
+	}
 }
+
+void loadNewLevel();
 
 int main(int argc, char* args[])
 {
@@ -469,7 +521,7 @@ int main(int argc, char* args[])
 	else
 	{
 		//The level tiles
-		Tile* tileSet[TOTAL_TILES];
+		
 
 		//Load media
 		if (!loadMedia(tileSet))
@@ -479,22 +531,27 @@ int main(int argc, char* args[])
 		else
 		{
 			//Scale the player2 texture and update the position accordingly
-			gPlayer2Texture.setWidth(gPlayer2Texture.getWidth() / 5);
-			gPlayer2Texture.setHeight(gPlayer2Texture.getHeight() / 5);
-			player2.setPlayer2PosX(player2.getPlayer2PosX() + (gPlayer2Texture.getWidth() / 2));
-			player2.setPlayer2PosY(player2.getPlayer2PosY() + (gPlayer2Texture.getHeight() / 2));
+			gPlayer2Texture.setWidth(gPlayer2Texture.getWidth() / 8);
+			gPlayer2Texture.setHeight(gPlayer2Texture.getHeight() / 8);
+			//player2.setPlayer2PosX(player2.getPlayer2PosX() + (gPlayer2Texture.getWidth() / 2));
+			//player2.setPlayer2PosY(player2.getPlayer2PosY() + (gPlayer2Texture.getHeight() / 2));
 
 			//Scale the player texture and update the position accordingly
-			gPlayer1Texture.setWidth(gPlayer1Texture.getWidth() / 8);
-			gPlayer1Texture.setHeight(gPlayer1Texture.getHeight() / 8);
-			player1.setPlayer1PosX(player2.getPlayer2PosX() + (gPlayer2Texture.getWidth() / 2));
-			player1.setPlayer1PosY(player2.getPlayer2PosY() + (gPlayer2Texture.getHeight() / 2));
+			gPlayer1Texture.setWidth(gPlayer1Texture.getWidth() / 11);
+			gPlayer1Texture.setHeight(gPlayer1Texture.getHeight() / 11);
+			//player1.setPlayer1PosX(player2.getPlayer2PosX() + (gPlayer2Texture.getWidth() / 2));
+			//player1.setPlayer1PosY(player2.getPlayer2PosY() + (gPlayer2Texture.getHeight() / 2));
 			player1.setPlayer1Width(gPlayer1Texture.getWidth());
 			player1.setPlayer1Height(gPlayer1Texture.getHeight());
+			gTargetTexture.setWidth(gTargetTexture.getWidth() / 4);
+			gTargetTexture.setHeight(gTargetTexture.getHeight() / 4);
 
 			//Scale the circle texture and update the position accordingly
 			gCircleTexture.setWidth(gCircleTexture.getWidth() / 24);
 			gCircleTexture.setHeight(gCircleTexture.getHeight() / 24);
+
+
+			randomizeSpawnLocations(&player1, &player2, &target);
 
 			//Main loop flag
 			bool quit = false;
@@ -538,12 +595,12 @@ int main(int argc, char* args[])
 			//balls[1].setCircleVelY(0);
 
 			//Initialize rects
-			Rectangle rects[5];
-			int numberOfRects = 5;
-			for (int i = 0; i < numberOfRects; i++)
-			{
-				rects[i] = Rectangle(150, 100);
-			}
+			//Rectangle rects[5];
+			//int numberOfRects = 5;
+			//for (int i = 0; i < numberOfRects; i++)
+			//{
+			//	rects[i] = Rectangle(150, 100);
+			//}
 
 			//While application is running
 			while (!quit)
@@ -564,12 +621,12 @@ int main(int argc, char* args[])
 				player1.movePlayer1(camera.stopPlayer1X, camera.stopPlayer1Y);
 				player2.movePlayer2(gPlayer2Texture.getWidth(), gPlayer2Texture.getHeight(), camera.stopPlayer2X, camera.stopPlayer2Y);
 
-				for (int i = 0; i < numberOfBalls; i++)
-				{
-					balls[i].setSeparation(separation);
-					balls[i].setBallCollision(ballCollision);
-					balls[i].moveCircle(i, gCircleTexture.getWidth(), gCircleTexture.getHeight(), balls, numberOfBalls, camera);
-				}
+				//for (int i = 0; i < numberOfBalls; i++)
+				//{
+				//	balls[i].setSeparation(separation);
+				//	balls[i].setBallCollision(ballCollision);
+				//	balls[i].moveCircle(i, gCircleTexture.getWidth(), gCircleTexture.getHeight(), balls, numberOfBalls, camera);
+				//}
 
 				//Clear screen
 				SDL_SetRenderDrawColor(gRenderer, 0x00, 0xFF, 0xFF, 0xFF);
@@ -581,20 +638,22 @@ int main(int argc, char* args[])
 					renderTile(tileSet[i], camera.camera);
 				}
 
+				//Render target
+				gTargetTexture.render(gRenderer, target.xPos - (gTargetTexture.getWidth() / 2) - camera.camera.x, target.yPos - (gTargetTexture.getHeight() / 2) - camera.camera.y);
+
+
 				//Render player1
 				gPlayer1Texture.render(gRenderer, player1.getPlayer1PosX() - (gPlayer1Texture.getWidth() / 2) - camera.camera.x, player1.getPlayer1PosY() - (gPlayer1Texture.getHeight() / 2) - camera.camera.y);
 
 				//Render player2
 				gPlayer2Texture.render(gRenderer, player2.getPlayer2PosX() - (gPlayer2Texture.getWidth() / 2) - camera.camera.x, player2.getPlayer2PosY() - (gPlayer2Texture.getHeight() / 2) - camera.camera.y);
 				
-				for (int i = 0; i < numberOfBalls; i++)
-				{
-					gCircleTexture.render(gRenderer, balls[i].getCirclePosX() - (gCircleTexture.getWidth() / 2) - camera.camera.x, balls[i].getCirclePosY() - (gCircleTexture.getHeight() / 2) - camera.camera.y);
-				}
-				//Render player2
-				gPlayer2Texture.render(gRenderer, player2.getPlayer2PosX() - (gPlayer2Texture.getWidth() / 2) - camera.camera.x, player2.getPlayer2PosY() - (gPlayer2Texture.getHeight() / 2) - camera.camera.y);
+				target.playerWon(&player1, &player2);
 
-
+				//for (int i = 0; i < numberOfBalls; i++)
+				//{
+				//	gCircleTexture.render(gRenderer, balls[i].getCirclePosX() - (gCircleTexture.getWidth() / 2) - camera.camera.x, balls[i].getCirclePosY() - (gCircleTexture.getHeight() / 2) - camera.camera.y);
+				//}
 				
 
 				//for (int i = 0; i < numberOfRects; i++)

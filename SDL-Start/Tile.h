@@ -26,6 +26,11 @@ public:
 	//Get the collision box
 	SDL_Rect getBox();
 
+	int getLeft();
+	int getRight();
+	int getTop();
+	int getBottom();
+
 private:
 	//The attributes of the tile
 	SDL_Rect mBox;

@@ -25,6 +25,7 @@ private:
 
 public:
 	Player2(int levelWidth, int levelHeight, int startX, int startY);
+	int score = 0;
 	int getPlayer2PosX();
 	void setPlayer2PosX(int value);
 	int getPlayer2PosY();

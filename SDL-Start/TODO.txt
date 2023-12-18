@@ -1,3 +1,8 @@
 Fix reflections:
 - Balls seem to slow down, could try to debug and fix or possibly rewrite the whole thing
 - Do the labyrinth
+	- Change tileset to vector/dynamic array
+	- wall collision
+	- level loading
+
+

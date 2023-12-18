@@ -139,6 +139,7 @@
     <ClCompile Include="LTexture.cpp" />
     <ClCompile Include="Player1.cpp" />
     <ClCompile Include="Rectangle.cpp" />
+    <ClCompile Include="Target.cpp" />
     <ClCompile Include="Tile.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -148,6 +149,7 @@
     <ClInclude Include="LTexture.h" />
     <ClInclude Include="Player1.h" />
     <ClInclude Include="Rectangle.h" />
+    <ClInclude Include="Target.h" />
     <ClInclude Include="Tile.h" />
   </ItemGroup>
   <ItemGroup>

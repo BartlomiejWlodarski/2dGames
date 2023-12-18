@@ -40,3 +40,23 @@ SDL_Rect Tile::getBox()
 {
 	return mBox;
 }
+
+int Tile::getLeft()
+{
+	return mBox.x;
+}
+
+int Tile::getRight()
+{
+	return mBox.x + mBox.w;
+}
+
+int Tile::getTop()
+{
+	return mBox.y;
+}
+
+int Tile::getBottom()
+{
+	return mBox.y + mBox.h;
+}

@@ -26,6 +26,7 @@ private:
 
 public:
 	Player1(int levelWidth, int levelHeight, int startX, int startY);
+	int score = 0;
 	int getPlayer1Size();
 	void setPlayer1Size(int value);
 	int getPlayer1Width();
