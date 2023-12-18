@@ -16,8 +16,7 @@ private:
 	const int player1VelStep = 2;
 	const float smooth = 0.5;
 
-	int LEVEL_WIDTH;
-	int LEVEL_HEIGHT;
+
 	
 	bool up;
 	bool down;
@@ -26,6 +25,8 @@ private:
 
 public:
 	Player1(int levelWidth, int levelHeight, int startX, int startY);
+	int LEVEL_WIDTH;
+	int LEVEL_HEIGHT;
 	int score = 0;
 	int getPlayer1Size();
 	void setPlayer1Size(int value);

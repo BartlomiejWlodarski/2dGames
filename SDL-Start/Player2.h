@@ -14,10 +14,6 @@ private:
 	int player2DesY;
 	float player2VelStepX = 0;
 	float player2VelStepY = 0;
-
-	int LEVEL_WIDTH;
-	int LEVEL_HEIGHT;
-
 	bool up;
 	bool down;
 	bool left;
@@ -26,6 +22,8 @@ private:
 public:
 	Player2(int levelWidth, int levelHeight, int startX, int startY);
 	int score = 0;
+	int LEVEL_WIDTH;
+	int LEVEL_HEIGHT;
 	int getPlayer2PosX();
 	void setPlayer2PosX(int value);
 	int getPlayer2PosY();

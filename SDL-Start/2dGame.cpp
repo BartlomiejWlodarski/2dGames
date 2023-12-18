@@ -166,12 +166,6 @@ bool init()
 
 bool loadMedia(std::vector <Tile*> tiles)
 {
-	Tile* tile = new Tile(0, 0, 0, 0, 0);
-	for (int i = tileSet.size(); i < TOTAL_TILES; i++)
-	{
-		tileSet.push_back(tile);
-	}
-	delete tile;
 	//Loading success flag
 	bool success = true;
 
@@ -300,14 +294,32 @@ void handleEvent(SDL_Event& e, int camX, int camY)
 
 bool setTiles()
 {
+	// Update tile data
+	Tile* tile = new Tile(0, 0, 0, 0, 0);
+	TOTAL_TILES = pow(16 + (currentLevel - 1) * 2, 2);
+	LEVEL_WIDTH = (16 + (currentLevel - 1) * 2) * 80;
+	LEVEL_HEIGHT = (16 + (currentLevel - 1) * 2) * 80;
+	player1.LEVEL_WIDTH = (16 + (currentLevel - 1) * 2) * 80;
+	player1.LEVEL_HEIGHT = (16 + (currentLevel - 1) * 2) * 80;
+	player2.LEVEL_WIDTH = (16 + (currentLevel - 1) * 2) * 80;
+	player2.LEVEL_HEIGHT = (16 + (currentLevel - 1) * 2) * 80;
+	for (int i = tileSet.size(); i < TOTAL_TILES; i++)
+	{
+		tileSet.push_back(tile);
+	}
+	delete tile;
+	
+	
 	//Success flag
 	bool tilesLoaded = true;
 
 	//The tile offsets
 	int x = 0, y = 0;
 
+	string mapPath = "maps/labyrinth" + to_string(currentLevel) + ".map";
+
 	//Open the map
-	std::ifstream map("maps/labyrinth1.map");
+	std::ifstream map(mapPath);
 
 	//If the map couldn't be loaded
 	if (map.fail())
@@ -530,165 +542,174 @@ int main(int argc, char* args[])
 	}
 	else
 	{
-		//The level tiles
+		//Main loop flag
+		bool quit = false;
 
-
-		//Load media
-		if (!loadMedia(tileSet))
-		{
-			printf("Failed to load media!\n");
-		}
-		else
-		{
-			//Scale the player2 texture and update the position accordingly
-			gPlayer2Texture.setWidth(gPlayer2Texture.getWidth() / 8);
-			gPlayer2Texture.setHeight(gPlayer2Texture.getHeight() / 8);
-			//player2.setPlayer2PosX(player2.getPlayer2PosX() + (gPlayer2Texture.getWidth() / 2));
-			//player2.setPlayer2PosY(player2.getPlayer2PosY() + (gPlayer2Texture.getHeight() / 2));
-
-			//Scale the player texture and update the position accordingly
-			gPlayer1Texture.setWidth(gPlayer1Texture.getWidth() / 11);
-			gPlayer1Texture.setHeight(gPlayer1Texture.getHeight() / 11);
-			//player1.setPlayer1PosX(player2.getPlayer2PosX() + (gPlayer2Texture.getWidth() / 2));
-			//player1.setPlayer1PosY(player2.getPlayer2PosY() + (gPlayer2Texture.getHeight() / 2));
-			player1.setPlayer1Width(gPlayer1Texture.getWidth());
-			player1.setPlayer1Height(gPlayer1Texture.getHeight());
-			gTargetTexture.setWidth(gTargetTexture.getWidth() / 4);
-			gTargetTexture.setHeight(gTargetTexture.getHeight() / 4);
-
-			//Scale the circle texture and update the position accordingly
-			gCircleTexture.setWidth(gCircleTexture.getWidth() / 24);
-			gCircleTexture.setHeight(gCircleTexture.getHeight() / 24);
-
-
-			randomizeSpawnLocations(&player1, &player2, &target);
-
-			//Main loop flag
-			bool quit = false;
-
-			//Event handler
-			SDL_Event e;
-
-			//The camera area
-			Camera camera(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-
-			//Reset vertical camera for positionLockCameraWindow
-			camera.camera.y = (player2.getPlayer2PosY()) - SCREEN_HEIGHT / 2;
-
-			//Reset vertical camera for twoPlayersCameraWindow
-			camera.camera.x = (player2.getPlayer2PosX()) - SCREEN_WIDTH / 2;
-
-			//Initialize balls
-			Circle balls[15];
-			int numberOfBalls = 15;
-			for (int i = 0; i < numberOfBalls; i++)
+		while (!quit) {
+			//Load media
+			if (!loadMedia(tileSet))
 			{
-				balls[i] = Circle();
+				printf("Failed to load media!\n");
 			}
-
-
-			//balls[0].setCirclePosX(300);
-			//balls[0].circlePosXfloat = 300;
-			//balls[1].setCirclePosX(600);
-			//balls[1].circlePosXfloat = 600;
-			//balls[0].setCirclePosY(500);
-			//balls[0].circlePosYfloat = 500;
-			//balls[1].setCirclePosY(500);
-			//balls[1].circlePosYfloat = 500;
-
-			//balls[0].setCircleVelX(0.5);
-			//balls[1].setCircleVelX(0.25);
-
-			//balls[0].setCircleVelY(0);
-			//balls[1].setCircleVelY(0);
-			//
-			//balls[1].setCircleVelY(0);
-
-			//Initialize rects
-			//Rectangle rects[5];
-			//int numberOfRects = 5;
-			//for (int i = 0; i < numberOfRects; i++)
-			//{
-			//	rects[i] = Rectangle(150, 100);
-			//}
-
-			//While application is running
-			while (!quit)
+			else
 			{
-				SDL_RenderSetScale(gRenderer, scale, scale);
-				//Handle events on queue
-				while (SDL_PollEvent(&e) != 0)
+				//Scale the player2 texture and update the position accordingly
+				gPlayer2Texture.setWidth(gPlayer2Texture.getWidth() / 8);
+				gPlayer2Texture.setHeight(gPlayer2Texture.getHeight() / 8);
+				//player2.setPlayer2PosX(player2.getPlayer2PosX() + (gPlayer2Texture.getWidth() / 2));
+				//player2.setPlayer2PosY(player2.getPlayer2PosY() + (gPlayer2Texture.getHeight() / 2));
+
+				//Scale the player texture and update the position accordingly
+				gPlayer1Texture.setWidth(gPlayer1Texture.getWidth() / 11);
+				gPlayer1Texture.setHeight(gPlayer1Texture.getHeight() / 11);
+				//player1.setPlayer1PosX(player2.getPlayer2PosX() + (gPlayer2Texture.getWidth() / 2));
+				//player1.setPlayer1PosY(player2.getPlayer2PosY() + (gPlayer2Texture.getHeight() / 2));
+				player1.setPlayer1Width(gPlayer1Texture.getWidth());
+				player1.setPlayer1Height(gPlayer1Texture.getHeight());
+				gTargetTexture.setWidth(gTargetTexture.getWidth() / 4);
+				gTargetTexture.setHeight(gTargetTexture.getHeight() / 4);
+
+				//Scale the circle texture and update the position accordingly
+				gCircleTexture.setWidth(gCircleTexture.getWidth() / 24);
+				gCircleTexture.setHeight(gCircleTexture.getHeight() / 24);
+
+
+				randomizeSpawnLocations(&player1, &player2, &target);
+
+
+
+				//Event handler
+				SDL_Event e;
+
+				//The camera area
+				Camera camera(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+				//Reset vertical camera for positionLockCameraWindow
+				camera.camera.y = (player2.getPlayer2PosY()) - SCREEN_HEIGHT / 2;
+
+				//Reset vertical camera for twoPlayersCameraWindow
+				camera.camera.x = (player2.getPlayer2PosX()) - SCREEN_WIDTH / 2;
+
+				//Initialize balls
+				Circle balls[15];
+				int numberOfBalls = 15;
+				for (int i = 0; i < numberOfBalls; i++)
 				{
-					//User requests quit
-					if (e.type == SDL_QUIT)
+					balls[i] = Circle();
+				}
+
+
+				//balls[0].setCirclePosX(300);
+				//balls[0].circlePosXfloat = 300;
+				//balls[1].setCirclePosX(600);
+				//balls[1].circlePosXfloat = 600;
+				//balls[0].setCirclePosY(500);
+				//balls[0].circlePosYfloat = 500;
+				//balls[1].setCirclePosY(500);
+				//balls[1].circlePosYfloat = 500;
+
+				//balls[0].setCircleVelX(0.5);
+				//balls[1].setCircleVelX(0.25);
+
+				//balls[0].setCircleVelY(0);
+				//balls[1].setCircleVelY(0);
+				//
+				//balls[1].setCircleVelY(0);
+
+				//Initialize rects
+				//Rectangle rects[5];
+				//int numberOfRects = 5;
+				//for (int i = 0; i < numberOfRects; i++)
+				//{
+				//	rects[i] = Rectangle(150, 100);
+				//}
+
+				//While application is running
+				while (!(target.playerWon(&player1, &player2) || quit))
+				{
+					SDL_RenderSetScale(gRenderer, scale, scale);
+					//Handle events on queue
+					while (SDL_PollEvent(&e) != 0)
 					{
-						quit = true;
+						//User requests quit
+						if (e.type == SDL_QUIT)
+						{
+							quit = true;
+						}
+						handleEvent(e, camera.camera.x, camera.camera.y);
 					}
-					handleEvent(e, camera.camera.x, camera.camera.y);
+
+					//Move objects
+					player1.movePlayer1(camera.stopPlayer1X, camera.stopPlayer1Y);
+					player2.movePlayer2(gPlayer2Texture.getWidth(), gPlayer2Texture.getHeight(), camera.stopPlayer2X, camera.stopPlayer2Y);
+
+					//for (int i = 0; i < numberOfBalls; i++)
+					//{
+					//	balls[i].setSeparation(separation);
+					//	balls[i].setBallCollision(ballCollision);
+					//	balls[i].moveCircle(i, gCircleTexture.getWidth(), gCircleTexture.getHeight(), balls, numberOfBalls, camera);
+					//}
+
+					//Clear screen
+					SDL_SetRenderDrawColor(gRenderer, 0x00, 0xFF, 0xFF, 0xFF);
+					SDL_RenderClear(gRenderer);
+
+					//Render level
+					for (int i = 0; i < TOTAL_TILES; ++i)
+					{
+						renderTile(tileSet[i], camera.camera);
+					}
+
+					//Render target
+					gTargetTexture.render(gRenderer, target.xPos - (gTargetTexture.getWidth() / 2) - camera.camera.x, target.yPos - (gTargetTexture.getHeight() / 2) - camera.camera.y);
+
+
+					//Render player1
+					gPlayer1Texture.render(gRenderer, player1.getPlayer1PosX() - (gPlayer1Texture.getWidth() / 2) - camera.camera.x, player1.getPlayer1PosY() - (gPlayer1Texture.getHeight() / 2) - camera.camera.y);
+
+					//Render player2
+					gPlayer2Texture.render(gRenderer, player2.getPlayer2PosX() - (gPlayer2Texture.getWidth() / 2) - camera.camera.x, player2.getPlayer2PosY() - (gPlayer2Texture.getHeight() / 2) - camera.camera.y);
+
+					
+
+					//for (int i = 0; i < numberOfBalls; i++)
+					//{
+					//	gCircleTexture.render(gRenderer, balls[i].getCirclePosX() - (gCircleTexture.getWidth() / 2) - camera.camera.x, balls[i].getCirclePosY() - (gCircleTexture.getHeight() / 2) - camera.camera.y);
+					//}
+
+
+					//for (int i = 0; i < numberOfRects; i++)
+					//{
+					//	//rects[i].setSeparation(separation);
+					//	//rects[i].setBallCollision(ballCollision);
+					//	rects[i].moveRectangle(i, rects, numberOfRects, camera);
+					//}
+
+					//for (int i = 0; i < numberOfRects; i++)
+					//{
+					//	SDL_Rect fillRect = { rects[i].l - camera.camera.x,  rects[i].t - camera.camera.y,  rects[i].w,  rects[i].h };
+					//	SDL_SetRenderDrawColor(gRenderer, 0xFF, 0x00, 0x00, 0xFF);
+					//	SDL_RenderFillRect(gRenderer, &fillRect);
+					//}
+
+
+					SDL_SetRenderDrawColor(gRenderer, 0xFF, 0x00, 0x00, 0xFF);
+					//Choosing which camera option to use
+					cameraMenu(&camera);
+
+					//Update screen
+					SDL_RenderPresent(gRenderer);
 				}
-
-				//Move objects
-				player1.movePlayer1(camera.stopPlayer1X, camera.stopPlayer1Y);
-				player2.movePlayer2(gPlayer2Texture.getWidth(), gPlayer2Texture.getHeight(), camera.stopPlayer2X, camera.stopPlayer2Y);
-
-				//for (int i = 0; i < numberOfBalls; i++)
-				//{
-				//	balls[i].setSeparation(separation);
-				//	balls[i].setBallCollision(ballCollision);
-				//	balls[i].moveCircle(i, gCircleTexture.getWidth(), gCircleTexture.getHeight(), balls, numberOfBalls, camera);
-				//}
-
-				//Clear screen
-				SDL_SetRenderDrawColor(gRenderer, 0x00, 0xFF, 0xFF, 0xFF);
-				SDL_RenderClear(gRenderer);
-
-				//Render level
-				for (int i = 0; i < TOTAL_TILES; ++i)
+				currentLevel++;
+				if (currentLevel > 3)
 				{
-					renderTile(tileSet[i], camera.camera);
+					quit = true;
 				}
-
-				//Render target
-				gTargetTexture.render(gRenderer, target.xPos - (gTargetTexture.getWidth() / 2) - camera.camera.x, target.yPos - (gTargetTexture.getHeight() / 2) - camera.camera.y);
-
-
-				//Render player1
-				gPlayer1Texture.render(gRenderer, player1.getPlayer1PosX() - (gPlayer1Texture.getWidth() / 2) - camera.camera.x, player1.getPlayer1PosY() - (gPlayer1Texture.getHeight() / 2) - camera.camera.y);
-
-				//Render player2
-				gPlayer2Texture.render(gRenderer, player2.getPlayer2PosX() - (gPlayer2Texture.getWidth() / 2) - camera.camera.x, player2.getPlayer2PosY() - (gPlayer2Texture.getHeight() / 2) - camera.camera.y);
-
-				target.playerWon(&player1, &player2);
-
-				//for (int i = 0; i < numberOfBalls; i++)
-				//{
-				//	gCircleTexture.render(gRenderer, balls[i].getCirclePosX() - (gCircleTexture.getWidth() / 2) - camera.camera.x, balls[i].getCirclePosY() - (gCircleTexture.getHeight() / 2) - camera.camera.y);
-				//}
-
-
-				//for (int i = 0; i < numberOfRects; i++)
-				//{
-				//	//rects[i].setSeparation(separation);
-				//	//rects[i].setBallCollision(ballCollision);
-				//	rects[i].moveRectangle(i, rects, numberOfRects, camera);
-				//}
-
-				//for (int i = 0; i < numberOfRects; i++)
-				//{
-				//	SDL_Rect fillRect = { rects[i].l - camera.camera.x,  rects[i].t - camera.camera.y,  rects[i].w,  rects[i].h };
-				//	SDL_SetRenderDrawColor(gRenderer, 0xFF, 0x00, 0x00, 0xFF);
-				//	SDL_RenderFillRect(gRenderer, &fillRect);
-				//}
-
-
-				SDL_SetRenderDrawColor(gRenderer, 0xFF, 0x00, 0x00, 0xFF);
-				//Choosing which camera option to use
-				cameraMenu(&camera);
-
-				//Update screen
-				SDL_RenderPresent(gRenderer);
 			}
 		}
+
+
+		
 
 		//Free resources and close SDL
 		close(tileSet);
