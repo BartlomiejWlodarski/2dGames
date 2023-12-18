@@ -17,19 +17,20 @@
 #include "Target.h"
 #include <ctime>
 #include <cstdlib>
+#include <vector>
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 1040;
 const int SCREEN_HEIGHT = 720;
 
 //Level dimension constants
-const int LEVEL_WIDTH = 1280;
-const int LEVEL_HEIGHT = 1280;
+int LEVEL_WIDTH = 1280;
+int LEVEL_HEIGHT = 1280;
 
 //Tile constants
 const int TILE_WIDTH = 80;
 const int TILE_HEIGHT = 80;
-const int TOTAL_TILES = 256;
+int TOTAL_TILES = 256;
 const int TOTAL_TILE_SPRITES = 12;
 
 //The different tile sprites
@@ -62,7 +63,10 @@ int cameraOption;
 bool separation = false;
 bool ballCollision = false;
 
-Tile* tileSet[TOTAL_TILES];
+int currentLevel = 1;
+
+//Tile* tileSet[TOTAL_TILES];
+std::vector <Tile*> tileSet;
 
 //Starts up SDL and creates window
 bool init();
@@ -74,7 +78,7 @@ bool loadMedia();
 void close();
 
 //Sets tiles from the map file
-bool setTiles(Tile* tiles[]);
+bool setTiles();
 
 //The window we'll be rendering to
 SDL_Window* gWindow = NULL;
@@ -160,8 +164,14 @@ bool init()
 	return success;
 }
 
-bool loadMedia(Tile* tiles[])
+bool loadMedia(std::vector <Tile*> tiles)
 {
+	Tile* tile = new Tile(0, 0, 0, 0, 0);
+	for (int i = tileSet.size(); i < TOTAL_TILES; i++)
+	{
+		tileSet.push_back(tile);
+	}
+	delete tile;
 	//Loading success flag
 	bool success = true;
 
@@ -209,7 +219,7 @@ bool loadMedia(Tile* tiles[])
 	}
 
 	//Load tile map
-	if (!setTiles(tiles))
+	if (!setTiles())
 	{
 		printf("Failed to load tile set!\n");
 		success = false;
@@ -217,7 +227,7 @@ bool loadMedia(Tile* tiles[])
 	return success;
 }
 
-void close(Tile* tiles[])
+void close(std::vector <Tile*> tiles)
 {
 	//Deallocate tiles
 	for (int i = 0; i < TOTAL_TILES; ++i)
@@ -266,9 +276,9 @@ void handleEvent(SDL_Event& e, int camX, int camY)
 		player1.playerKeyReleased(e.key.keysym.sym);
 		//std::cout << "Player1PosX: " << player1PosX << "; Player1PosY: " << player1PosY << "; Player1VelX: " << player1VelX << "; Player1VelY: " << player1VelY << "\n";
 	}
-	if (e.type == SDL_KEYDOWN && e.key.repeat == 0 && e.key.keysym.sym == SDLK_p) 
+	if (e.type == SDL_KEYDOWN && e.key.repeat == 0 && e.key.keysym.sym == SDLK_p)
 	{
-		
+
 		separation = !separation;
 		std::cout << "Separation: " << to_string(separation) << "\n";
 	}
@@ -278,17 +288,17 @@ void handleEvent(SDL_Event& e, int camX, int camY)
 		ballCollision = !ballCollision;
 		std::cout << "Ball collision: " << to_string(ballCollision) << "\n";
 	}
-		
+
 	//If mouse button was pressed
 	if (e.type == SDL_MOUSEBUTTONDOWN)
 	{
 		player2.playerKeyPressed(gPlayer2Texture.getWidth(), gPlayer2Texture.getHeight(), camX, camY, scale);
 	}
 
-	
+
 }
 
-bool setTiles(Tile* tiles[])
+bool setTiles()
 {
 	//Success flag
 	bool tilesLoaded = true;
@@ -328,7 +338,7 @@ bool setTiles(Tile* tiles[])
 			//If the number is a valid tile number
 			if ((tileType >= 0) && (tileType < TOTAL_TILE_SPRITES))
 			{
-				tiles[i] = new Tile(x, y, tileType, TILE_WIDTH, TILE_HEIGHT);
+				tileSet[i] = new Tile(x, y, tileType, TILE_WIDTH, TILE_HEIGHT);
 			}
 			//If we don't recognize the tile type
 			else
@@ -426,7 +436,7 @@ bool setTiles(Tile* tiles[])
 }
 
 
-void cameraMenu(Camera *camera)
+void cameraMenu(Camera* camera)
 {
 	switch (cameraOption)
 	{
@@ -468,7 +478,7 @@ void cameraMenu(Camera *camera)
 	}
 }
 
-void randomizeSpawnLocations(Player1 *p1, Player2 *p2, Target *t)
+void randomizeSpawnLocations(Player1* p1, Player2* p2, Target* t)
 {
 	bool success = false;
 	int randomTile, randomTile2, randomTile3;
@@ -521,7 +531,7 @@ int main(int argc, char* args[])
 	else
 	{
 		//The level tiles
-		
+
 
 		//Load media
 		if (!loadMedia(tileSet))
@@ -575,7 +585,7 @@ int main(int argc, char* args[])
 			{
 				balls[i] = Circle();
 			}
-			
+
 
 			//balls[0].setCirclePosX(300);
 			//balls[0].circlePosXfloat = 300;
@@ -616,7 +626,7 @@ int main(int argc, char* args[])
 					}
 					handleEvent(e, camera.camera.x, camera.camera.y);
 				}
-				
+
 				//Move objects
 				player1.movePlayer1(camera.stopPlayer1X, camera.stopPlayer1Y);
 				player2.movePlayer2(gPlayer2Texture.getWidth(), gPlayer2Texture.getHeight(), camera.stopPlayer2X, camera.stopPlayer2Y);
@@ -647,14 +657,14 @@ int main(int argc, char* args[])
 
 				//Render player2
 				gPlayer2Texture.render(gRenderer, player2.getPlayer2PosX() - (gPlayer2Texture.getWidth() / 2) - camera.camera.x, player2.getPlayer2PosY() - (gPlayer2Texture.getHeight() / 2) - camera.camera.y);
-				
+
 				target.playerWon(&player1, &player2);
 
 				//for (int i = 0; i < numberOfBalls; i++)
 				//{
 				//	gCircleTexture.render(gRenderer, balls[i].getCirclePosX() - (gCircleTexture.getWidth() / 2) - camera.camera.x, balls[i].getCirclePosY() - (gCircleTexture.getHeight() / 2) - camera.camera.y);
 				//}
-				
+
 
 				//for (int i = 0; i < numberOfRects; i++)
 				//{
