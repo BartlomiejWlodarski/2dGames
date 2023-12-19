@@ -98,7 +98,7 @@ SDL_Rect gTileClips[TOTAL_TILE_SPRITES];
 Player1 player1(LEVEL_WIDTH, LEVEL_HEIGHT, 500, 500, gPlayer1Texture.getWidth(), gPlayer1Texture.getHeight());
 
 //Player2 constants and variables
-Player2 player2(LEVEL_WIDTH, LEVEL_HEIGHT, 600, 500);
+Player2 player2(LEVEL_WIDTH, LEVEL_HEIGHT, 600, 500, gPlayer2Texture.getWidth(), gPlayer2Texture.getHeight());
 
 Target target(0, 0);
 
@@ -262,6 +262,7 @@ void handleEvent(SDL_Event& e, int camX, int camY)
 	{
 		//Adjust the velocity
 		player1.playerKeyPressed(e.key.keysym.sym);
+		player2.playerKeyPressed(e.key.keysym.sym);
 		//std::cout << "Player1PosX: " << player1PosX << "; Player1PosY: " << player1PosY << "; Player1VelX: " << player1VelX << "; Player1VelY: " << player1VelY << "\n";
 	}
 	//If a key was released
@@ -269,6 +270,7 @@ void handleEvent(SDL_Event& e, int camX, int camY)
 	{
 		//Adjust the velocity
 		player1.playerKeyReleased(e.key.keysym.sym);
+		player2.playerKeyReleased(e.key.keysym.sym);
 		//std::cout << "Player1PosX: " << player1PosX << "; Player1PosY: " << player1PosY << "; Player1VelX: " << player1VelX << "; Player1VelY: " << player1VelY << "\n";
 	}
 	if (e.type == SDL_KEYDOWN && e.key.repeat == 0 && e.key.keysym.sym == SDLK_p)
@@ -285,10 +287,10 @@ void handleEvent(SDL_Event& e, int camX, int camY)
 	}
 
 	//If mouse button was pressed
-	if (e.type == SDL_MOUSEBUTTONDOWN)
-	{
-		player2.playerKeyPressed(gPlayer2Texture.getWidth(), gPlayer2Texture.getHeight(), camX, camY, scale);
-	}
+	//if (e.type == SDL_MOUSEBUTTONDOWN)
+	//{
+	//	
+	//}
 
 
 }
@@ -307,6 +309,8 @@ bool setTiles()
 	TILES_IN_ONE_DIMENSION = (16 + (currentLevel - 1) * 2);
 	player1.tilesX = LEVEL_WIDTH / 80;
 	player1.tilesY = LEVEL_HEIGHT / 80;
+	player2.tilesX = LEVEL_WIDTH / 80;
+	player2.tilesY = LEVEL_HEIGHT / 80;
 
 	for (int i = tileSet.size(); i < TOTAL_TILES; i++)
 	{
@@ -571,6 +575,10 @@ int main(int argc, char* args[])
 				//player1.setPlayer1PosY(player2.getPlayer2PosY() + (gPlayer2Texture.getHeight() / 2));
 				player1.setPlayer1Width(gPlayer1Texture.getWidth());
 				player1.setPlayer1Height(gPlayer1Texture.getHeight());
+				player2.setPlayer2Width(gPlayer2Texture.getWidth());
+				player2.setPlayer2Height(gPlayer2Texture.getHeight());
+
+				//Scale the target texture
 				gTargetTexture.setWidth(gTargetTexture.getWidth() / 4);
 				gTargetTexture.setHeight(gTargetTexture.getHeight() / 4);
 
@@ -646,7 +654,7 @@ int main(int argc, char* args[])
 
 					//Move objects
 					player1.movePlayer1(camera.stopPlayer1X, camera.stopPlayer1Y, tileSet);
-					player2.movePlayer2(gPlayer2Texture.getWidth(), gPlayer2Texture.getHeight(), camera.stopPlayer2X, camera.stopPlayer2Y);
+					player2.movePlayer2(camera.stopPlayer2X, camera.stopPlayer2Y, tileSet);
 
 					//for (int i = 0; i < numberOfBalls; i++)
 					//{

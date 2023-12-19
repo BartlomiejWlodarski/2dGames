@@ -16,7 +16,7 @@ private:
 
 	float player1VelX;
 	float player1VelY;
-	const float player1VelStep = 1;
+	const float player1VelStep = 0.5;
 	const float smooth = 0.5;
 
 

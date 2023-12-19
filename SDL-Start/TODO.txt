@@ -1,8 +1,6 @@
 Fix reflections:
 - Balls seem to slow down, could try to debug and fix or possibly rewrite the whole thing
 Do the labyrinth
-	- wall collision
-	//- Player2 update destination after level change?
 	- add arrow pointing to target
 
 
