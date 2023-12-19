@@ -11,6 +11,9 @@ Player1::Player1(int levelWidth, int levelHeight, int startX, int startY)
 	this->LEVEL_HEIGHT = levelHeight;
 
 	this->player1Size = LEVEL_HEIGHT / 10;
+
+	tilesX = LEVEL_WIDTH / 80;
+	tilesY = LEVEL_HEIGHT / 80;
 }
 
 int Player1::getPlayer1Size()
@@ -83,7 +86,7 @@ void Player1::setPlayer1VelY(int value)
 	this->player1VelY = value;
 }
 
-void Player1::movePlayer1(int stopX, int stopY)
+void Player1::movePlayer1(int stopX, int stopY, std::vector <Tile*> tiles)
 {
 	checkCameraWindow(stopX, stopY);
 	//Move the dot left or right
@@ -105,7 +108,7 @@ void Player1::movePlayer1(int stopX, int stopY)
 		//Move back
 		player1PosY -= player1VelY;
 	}
-
+	findCollidableTiles(tiles);
 }
 
 void Player1::playerKeyPressed(SDL_Keycode sym)
@@ -172,5 +175,35 @@ void Player1::checkCameraWindow(int stopX, int stopY)
 	{
 		player1VelX = 0;
 	}
+}
+
+void Player1::findCollidableTiles(std::vector<Tile*> tiles)
+{
+	int col = int(player1PosX / 80);
+	int row = int(player1PosY / 80);
+	int index;
+
+	// Function finds 3x3 square of tiles surrounding player and if a tile is water checks collision
+	for (int i = 0; i < 3; i++)
+	{
+
+		for (int j = 0; j < 3; j++)
+		{
+			index = row * tilesX + col + tilesX * (i - 1) + (j - 1);
+			if (index >= 0 && index < tilesX * tilesY && index >= row * tilesX + tilesX * (i - 1) && index < (row + 1) * tilesX + tilesX * (i - 1))
+			{
+				// If tile is water
+				if (tiles[index]->getType() > 2)
+				{
+					checkTileCollision(tiles, index);
+				}
+			}
+		}
+	}
+}
+
+void Player1::checkTileCollision(std::vector<Tile*> tiles, int index)
+{
+	
 }
 

@@ -2,6 +2,8 @@
 #include <SDL.h>
 #include <stdio.h>
 #include <iostream>
+#include <vector>
+#include "Tile.h"
 
 class Player1
 {
@@ -27,6 +29,8 @@ public:
 	Player1(int levelWidth, int levelHeight, int startX, int startY);
 	int LEVEL_WIDTH;
 	int LEVEL_HEIGHT;
+	int tilesX;
+	int tilesY;
 	int score = 0;
 	int getPlayer1Size();
 	void setPlayer1Size(int value);
@@ -42,9 +46,11 @@ public:
 	void setPlayer1VelX(int value);
 	int getPlayer1VelY();
 	void setPlayer1VelY(int value);
-	void movePlayer1(int stopX, int stopY);
+	void movePlayer1(int stopX, int stopY, std::vector <Tile*> tiles);
 	void playerKeyPressed(SDL_Keycode sym);
 	void playerKeyReleased(SDL_Keycode sym);
 	void checkCameraWindow(int stopX, int stopY);
+	void findCollidableTiles(std::vector <Tile*> tiles);
+	void checkTileCollision(std::vector <Tile*> tiles, int index);
 };
 

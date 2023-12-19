@@ -32,6 +32,7 @@ const int TILE_WIDTH = 80;
 const int TILE_HEIGHT = 80;
 int TOTAL_TILES = 256;
 const int TOTAL_TILE_SPRITES = 12;
+int TILES_IN_ONE_DIMENSION = 16;
 
 //The different tile sprites
 const int TILE_DIRT = 0;
@@ -303,6 +304,8 @@ bool setTiles()
 	player1.LEVEL_HEIGHT = (16 + (currentLevel - 1) * 2) * 80;
 	player2.LEVEL_WIDTH = (16 + (currentLevel - 1) * 2) * 80;
 	player2.LEVEL_HEIGHT = (16 + (currentLevel - 1) * 2) * 80;
+	TILES_IN_ONE_DIMENSION = (16 + (currentLevel - 1) * 2);
+
 	for (int i = tileSet.size(); i < TOTAL_TILES; i++)
 	{
 		tileSet.push_back(tile);
@@ -570,8 +573,8 @@ int main(int argc, char* args[])
 				gTargetTexture.setHeight(gTargetTexture.getHeight() / 4);
 
 				//Scale the circle texture and update the position accordingly
-				gCircleTexture.setWidth(gCircleTexture.getWidth() / 24);
-				gCircleTexture.setHeight(gCircleTexture.getHeight() / 24);
+				gCircleTexture.setWidth(gPlayer1Texture.getHeight());
+				gCircleTexture.setHeight(gPlayer1Texture.getHeight());
 
 
 				randomizeSpawnLocations(&player1, &player2, &target);
@@ -640,7 +643,7 @@ int main(int argc, char* args[])
 					}
 
 					//Move objects
-					player1.movePlayer1(camera.stopPlayer1X, camera.stopPlayer1Y);
+					player1.movePlayer1(camera.stopPlayer1X, camera.stopPlayer1Y, tileSet);
 					player2.movePlayer2(gPlayer2Texture.getWidth(), gPlayer2Texture.getHeight(), camera.stopPlayer2X, camera.stopPlayer2Y);
 
 					//for (int i = 0; i < numberOfBalls; i++)
@@ -663,9 +666,14 @@ int main(int argc, char* args[])
 					//Render target
 					gTargetTexture.render(gRenderer, target.xPos - (gTargetTexture.getWidth() / 2) - camera.camera.x, target.yPos - (gTargetTexture.getHeight() / 2) - camera.camera.y);
 
+					gCircleTexture.render(gRenderer, player1.getPlayer1PosX() - (gCircleTexture.getWidth() / 2) - camera.camera.x, player1.getPlayer1PosY() - (gPlayer1Texture.getHeight() / 2) - camera.camera.y);
 
 					//Render player1
 					gPlayer1Texture.render(gRenderer, player1.getPlayer1PosX() - (gPlayer1Texture.getWidth() / 2) - camera.camera.x, player1.getPlayer1PosY() - (gPlayer1Texture.getHeight() / 2) - camera.camera.y);
+
+					SDL_Rect fillRect = { player2.getPlayer2PosX() - (gPlayer2Texture.getWidth()/2) - camera.camera.x,  player2.getPlayer2PosY() - (gPlayer2Texture.getHeight()/2) - camera.camera.y,  gPlayer2Texture.getWidth(),  gPlayer2Texture.getHeight() };
+					SDL_SetRenderDrawColor(gRenderer, 0xFF, 0x00, 0x00, 0xFF);
+					SDL_RenderDrawRect(gRenderer, &fillRect);
 
 					//Render player2
 					gPlayer2Texture.render(gRenderer, player2.getPlayer2PosX() - (gPlayer2Texture.getWidth() / 2) - camera.camera.x, player2.getPlayer2PosY() - (gPlayer2Texture.getHeight() / 2) - camera.camera.y);
@@ -703,7 +711,12 @@ int main(int argc, char* args[])
 				currentLevel++;
 				if (currentLevel > 3)
 				{
-					quit = true;
+					//quit = true;
+					std::cout << "Player 1 score: " << std::to_string(player1.score) << std::endl;
+					std::cout << "Player 2 score: " << std::to_string(player2.score) << std::endl;
+					player1.score = 0;
+					player2.score = 0;
+					currentLevel = 1;
 				}
 			}
 		}
