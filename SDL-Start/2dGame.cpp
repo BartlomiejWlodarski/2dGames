@@ -305,6 +305,8 @@ bool setTiles()
 	player2.LEVEL_WIDTH = (16 + (currentLevel - 1) * 2) * 80;
 	player2.LEVEL_HEIGHT = (16 + (currentLevel - 1) * 2) * 80;
 	TILES_IN_ONE_DIMENSION = (16 + (currentLevel - 1) * 2);
+	player1.tilesX = LEVEL_WIDTH / 80;
+	player1.tilesY = LEVEL_HEIGHT / 80;
 
 	for (int i = tileSet.size(); i < TOTAL_TILES; i++)
 	{
@@ -563,8 +565,8 @@ int main(int argc, char* args[])
 				//player2.setPlayer2PosY(player2.getPlayer2PosY() + (gPlayer2Texture.getHeight() / 2));
 
 				//Scale the player texture and update the position accordingly
-				gPlayer1Texture.setWidth(gPlayer1Texture.getWidth() / 11);
-				gPlayer1Texture.setHeight(gPlayer1Texture.getHeight() / 11);
+				gPlayer1Texture.setWidth(gPlayer1Texture.getWidth() / 15);
+				gPlayer1Texture.setHeight(gPlayer1Texture.getHeight() / 15);
 				//player1.setPlayer1PosX(player2.getPlayer2PosX() + (gPlayer2Texture.getWidth() / 2));
 				//player1.setPlayer1PosY(player2.getPlayer2PosY() + (gPlayer2Texture.getHeight() / 2));
 				player1.setPlayer1Width(gPlayer1Texture.getWidth());

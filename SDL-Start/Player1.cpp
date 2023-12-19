@@ -14,8 +14,7 @@ Player1::Player1(int levelWidth, int levelHeight, int startX, int startY, int te
 
 	this->player1Size = LEVEL_HEIGHT / 10;
 
-	tilesX = LEVEL_WIDTH / 80;
-	tilesY = LEVEL_HEIGHT / 80;
+
 
 	width = textureWidth;
 	height = textureHeight;
@@ -38,6 +37,7 @@ int Player1::getPlayer1Width()
 
 void Player1::setPlayer1Width(int value)
 {
+	width = value;
 	this->player1Width = value;
 }
 
@@ -48,6 +48,7 @@ int Player1::getPlayer1Height()
 
 void Player1::setPlayer1Height(int value)
 {
+	height = value;
 	this->player1Height = value;
 }
 
@@ -253,7 +254,42 @@ float Player1::clamp(float x, float min, float max)
 
 void Player1::checkTileCollision(std::vector<Tile*> tiles, int index)
 {
-	float left = getRight() - tiles[index]->getLeft();
+	float fx = clamp(posX, tiles[index]->getLeft(), tiles[index]->getRight());
+	float fy = clamp(posY, tiles[index]->getTop(), tiles[index]->getBottom());
+	
+	if (sqrt(pow(posX - fx, 2) + pow(posY - fy, 2)) < height / 2)
+	{
+		if (posX == fx && posY == fy) {
+			//TODO
+		}
+		else
+		{
+			std::vector <float> v;
+			v.push_back(posX - fx);
+			v.push_back(posY - fy);
+			float vNorm = sqrt(pow(v[0], 2) + pow(v[1], 2));
+
+			float separation_x, separation_y;
+			if (vNorm == 0)
+			{
+				separation_x = 0;
+				separation_y = 0;
+			}
+			else
+			{
+				separation_x = (v[0]) / vNorm * (height * 0.5 - vNorm);
+				separation_y = (v[1]) / vNorm * (height * 0.5 - vNorm);
+			}
+
+			//float tmpx = separation_x * 0.5;
+			//float tmpy = separation_y * 0.5;
+
+
+			posX += separation_x;
+			posY += separation_y;
+		}
+	}
+	/*float left = getRight() - tiles[index]->getLeft();
 	float right = tiles[index]->getRight() - getLeft();
 	float top = getBottom() - tiles[index]->getTop();
 	float bottom = tiles[index]->getBottom() - getTop();
@@ -276,7 +312,7 @@ void Player1::checkTileCollision(std::vector<Tile*> tiles, int index)
 
 		posX += separationX;
 		posY += separationY;
-	}
+	}*/
 
 }
 
