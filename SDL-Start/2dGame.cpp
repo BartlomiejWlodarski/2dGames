@@ -95,7 +95,7 @@ LTexture gTargetTexture;
 SDL_Rect gTileClips[TOTAL_TILE_SPRITES];
 
 //Player1 constants and variables
-Player1 player1(LEVEL_WIDTH, LEVEL_HEIGHT, 500, 500);
+Player1 player1(LEVEL_WIDTH, LEVEL_HEIGHT, 500, 500, gPlayer1Texture.getWidth(), gPlayer1Texture.getHeight());
 
 //Player2 constants and variables
 Player2 player2(LEVEL_WIDTH, LEVEL_HEIGHT, 600, 500);

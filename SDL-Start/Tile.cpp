@@ -41,22 +41,22 @@ SDL_Rect Tile::getBox()
 	return mBox;
 }
 
-int Tile::getLeft()
+float Tile::getLeft()
 {
-	return mBox.x;
+	return float(mBox.x);
 }
 
-int Tile::getRight()
+float Tile::getRight()
 {
-	return mBox.x + mBox.w;
+	return float(mBox.x + mBox.w);
 }
 
-int Tile::getTop()
+float Tile::getTop()
 {
-	return mBox.y;
+	return float(mBox.y);
 }
 
-int Tile::getBottom()
+float Tile::getBottom()
 {
-	return mBox.y + mBox.h;
+	return float(mBox.y + mBox.h);
 }

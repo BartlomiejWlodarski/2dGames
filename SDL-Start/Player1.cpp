@@ -1,9 +1,11 @@
 #include "Player1.h"
 
-Player1::Player1(int levelWidth, int levelHeight, int startX, int startY)
+Player1::Player1(int levelWidth, int levelHeight, int startX, int startY, int textureWidth, int textureHeight)
 {
 	this->player1PosX = startX;
 	this->player1PosY = startY;
+	posX = float(getPlayer1PosX());
+	posY = float(getPlayer1PosY());
 	this->player1VelX = 0;
 	this->player1VelY = 0;
 
@@ -14,6 +16,9 @@ Player1::Player1(int levelWidth, int levelHeight, int startX, int startY)
 
 	tilesX = LEVEL_WIDTH / 80;
 	tilesY = LEVEL_HEIGHT / 80;
+
+	width = textureWidth;
+	height = textureHeight;
 }
 
 int Player1::getPlayer1Size()
@@ -53,6 +58,7 @@ int Player1::getPlayer1PosX()
 
 void Player1::setPlayer1PosX(int value)
 {
+	posX = value;
 	this->player1PosX = value;
 }
 
@@ -63,51 +69,58 @@ int Player1::getPlayer1PosY()
 
 void Player1::setPlayer1PosY(int value)
 {
+	posY = value;
 	this->player1PosY = value;
 }
 
-int Player1::getPlayer1VelX()
+float Player1::getPlayer1VelX()
 {
 	return this->player1VelX;
 }
 
-void Player1::setPlayer1VelX(int value)
+void Player1::setPlayer1VelX(float value)
 {
 	this->player1VelX = value;
 }
 
-int Player1::getPlayer1VelY()
+float Player1::getPlayer1VelY()
 {
 	return this->player1VelY;
 }
 
-void Player1::setPlayer1VelY(int value)
+void Player1::setPlayer1VelY(float value)
 {
 	this->player1VelY = value;
 }
 
 void Player1::movePlayer1(int stopX, int stopY, std::vector <Tile*> tiles)
 {
-	checkCameraWindow(stopX, stopY);
+	//checkCameraWindow(stopX, stopY);
 	//Move the dot left or right
-	player1PosX += player1VelX;
+	posX += player1VelX;
+	
 
 	//If the dot went too far to the left or right
-	if ((player1PosX - player1Width / 2 < 0) || (player1PosX + player1Width / 2 > LEVEL_WIDTH))
+	if ((posX - player1Height / 2 < 0) || (posX + player1Height / 2 > LEVEL_WIDTH))
 	{
 		//Move back
-		player1PosX -= player1VelX;
+		posX -= player1VelX;
 	}
+
+	player1PosX = int(posX);
 
 	//Move the dot up or down
-	player1PosY += player1VelY;
+	posY += player1VelY;
+	
 
 	//If the dot went too far up or down
-	if ((player1PosY - player1Height / 2 < 0) || (player1PosY + player1Height / 2 > LEVEL_HEIGHT))
+	if ((posY - player1Height / 2 < 0) || (posY + player1Height / 2 > LEVEL_HEIGHT))
 	{
 		//Move back
-		player1PosY -= player1VelY;
+		posY -= player1VelY;
 	}
+
+	player1PosY = int(posY);
 	findCollidableTiles(tiles);
 }
 
@@ -202,8 +215,68 @@ void Player1::findCollidableTiles(std::vector<Tile*> tiles)
 	}
 }
 
+float Player1::getLeft()
+{
+	return float(posX-width*0.5);
+}
+
+float Player1::getRight()
+{
+	return float(posX + width * 0.5);
+}
+
+float Player1::getTop()
+{
+	return float(posY - width * 0.5);
+}
+
+float Player1::getBottom()
+{
+	return float(posY + width * 0.5);
+}
+
+float Player1::clamp(float x, float min, float max)
+{
+	if (x <= min)
+	{
+		return min;
+	}
+	else if (x > min && x < max)
+	{
+		return x;
+	}
+	else
+	{
+		return max;
+	}
+}
+
 void Player1::checkTileCollision(std::vector<Tile*> tiles, int index)
 {
+	float left = getRight() - tiles[index]->getLeft();
+	float right = tiles[index]->getRight() - getLeft();
+	float top = getBottom() - tiles[index]->getTop();
+	float bottom = tiles[index]->getBottom() - getTop();
+
 	
+	if (left > 0 && right > 0 && top > 0 && bottom > 0)
+	{
+		float separationX;
+		float separationY;
+		left < right ? separationX = -left : separationX = right;
+		top < bottom ? separationY = -top : separationY = bottom;
+		if (abs(separationX) < abs(separationY)) 
+		{
+			 separationY = 0;
+		}
+		else if (abs(separationX) > abs(separationY))
+		{
+			separationX = 0;
+		}
+
+		posX += separationX;
+		posY += separationY;
+	}
+
 }
 
