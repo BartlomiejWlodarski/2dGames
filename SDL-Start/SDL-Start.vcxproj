@@ -141,6 +141,7 @@
     <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="Target.cpp" />
     <ClCompile Include="Tile.cpp" />
+    <ClCompile Include="Vector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
@@ -151,6 +152,7 @@
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="Target.h" />
     <ClInclude Include="Tile.h" />
+    <ClInclude Include="Vector.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="TODO.txt" />

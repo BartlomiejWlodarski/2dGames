@@ -18,6 +18,8 @@
 #include <ctime>
 #include <cstdlib>
 #include <vector>
+#include <chrono>
+#include <thread>
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 1040;
@@ -92,6 +94,7 @@ LTexture gPlayer1Texture;
 LTexture gTileTexture;
 LTexture gCircleTexture;
 LTexture gTargetTexture;
+LTexture gArrowTexture;
 SDL_Rect gTileClips[TOTAL_TILE_SPRITES];
 
 //Player1 constants and variables
@@ -205,6 +208,15 @@ bool loadMedia(std::vector <Tile*> tiles)
 		success = false;
 	}
 	gTargetTexture.setBlendMode(SDL_BLENDMODE_BLEND);
+	//gPlayer1Texture.setAlpha(100);
+
+	//Load arrow texture
+	if (!gArrowTexture.loadFromFile("textures/arrow.png", gRenderer))
+	{
+		printf("Failed to load arrow texture!\n");
+		success = false;
+	}
+	gArrowTexture.setBlendMode(SDL_BLENDMODE_BLEND);
 	//gPlayer1Texture.setAlpha(100);
 
 	if (!gTileTexture.loadFromFile("textures/tiles.png", gRenderer))
@@ -462,6 +474,7 @@ void cameraMenu(Camera* camera)
 	switch (cameraOption)
 	{
 	case 0:
+		scale = 1;
 		camera->stopPlayer1X = 0;
 		camera->stopPlayer1Y = 0;
 		camera->stopPlayer2X = 0;
@@ -689,6 +702,15 @@ int main(int argc, char* args[])
 					gPlayer2Texture.render(gRenderer, player2.getPlayer2PosX() - (gPlayer2Texture.getWidth() / 2) - camera.camera.x, player2.getPlayer2PosY() - (gPlayer2Texture.getHeight() / 2) - camera.camera.y);
 
 					
+					target.updatePointer(&camera, scale);
+
+					if (target.xPos < camera.camera.x * (1/scale) || target.xPos > camera.camera.x + camera.camera.w * (1 / scale) || target.yPos < camera.camera.y * (1 / scale) || target.yPos > camera.camera.y + camera.camera.h * (1 / scale))
+					{
+						gArrowTexture.render(gRenderer, int(target.pointerX) - (gArrowTexture.getWidth() / 2) - camera.camera.x, int(target.pointerY) - (gArrowTexture.getHeight() / 2) - camera.camera.y, NULL, target.pointerAngle, NULL, SDL_FLIP_NONE);
+
+					}
+
+					
 
 					//for (int i = 0; i < numberOfBalls; i++)
 					//{
@@ -722,11 +744,14 @@ int main(int argc, char* args[])
 				if (currentLevel > 3)
 				{
 					//quit = true;
+					std::cout << "##################################################" << std::endl;
 					std::cout << "Player 1 score: " << std::to_string(player1.score) << std::endl;
 					std::cout << "Player 2 score: " << std::to_string(player2.score) << std::endl;
+					std::cout << "##################################################" << std::endl;
 					player1.score = 0;
 					player2.score = 0;
 					currentLevel = 1;
+					std::this_thread::sleep_for(std::chrono::seconds(5));
 				}
 			}
 		}

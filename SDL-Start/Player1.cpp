@@ -280,39 +280,9 @@ void Player1::checkTileCollision(std::vector<Tile*> tiles, int index)
 				separation_x = (v[0]) / vNorm * (height * 0.5 - vNorm);
 				separation_y = (v[1]) / vNorm * (height * 0.5 - vNorm);
 			}
-
-			//float tmpx = separation_x * 0.5;
-			//float tmpy = separation_y * 0.5;
-
-
 			posX += separation_x;
 			posY += separation_y;
 		}
 	}
-	/*float left = getRight() - tiles[index]->getLeft();
-	float right = tiles[index]->getRight() - getLeft();
-	float top = getBottom() - tiles[index]->getTop();
-	float bottom = tiles[index]->getBottom() - getTop();
-
-	
-	if (left > 0 && right > 0 && top > 0 && bottom > 0)
-	{
-		float separationX;
-		float separationY;
-		left < right ? separationX = -left : separationX = right;
-		top < bottom ? separationY = -top : separationY = bottom;
-		if (abs(separationX) < abs(separationY)) 
-		{
-			 separationY = 0;
-		}
-		else if (abs(separationX) > abs(separationY))
-		{
-			separationX = 0;
-		}
-
-		posX += separationX;
-		posY += separationY;
-	}*/
-
 }
 
