@@ -96,6 +96,8 @@ void Player2::setPlayer2VelY(float value)
 
 void Player2::movePlayer2(int stopX, int stopY, std::vector <Tile*> tiles)
 {
+	gravitation();
+	
 	//checkCameraWindow(stopX, stopY);
 	//Move the dot left or right
 	posX += player2VelX;
@@ -145,6 +147,14 @@ void Player2::playerKeyPressed(SDL_Keycode sym)
 		std::cout << "Right arrow pressed" << "\n";
 		right = true;
 		break;
+	case SDLK_SPACE: 
+		if (!jumping)
+		{
+			jumping = true;
+			jump();
+		}
+
+		break;
 	}
 }
 
@@ -167,6 +177,9 @@ void Player2::playerKeyReleased(SDL_Keycode sym)
 	case SDLK_RIGHT: player2VelX = 0;
 		std::cout << "Right arrow released" << "\n";
 		right = false;
+		break;
+	case SDLK_SPACE: 
+		jumping = false;
 		break;
 	}
 }
@@ -252,6 +265,19 @@ float Player2::clamp(float x, float min, float max)
 	}
 }
 
+float Player2::jump()
+{
+	v0 = 2 * h * (vx) / xh;
+	player2VelY = -v0;
+	//g = -2 * h * pow(vx, 2) / pow(xh, 2);
+	return 0;
+}
+
+void Player2::gravitation()
+{
+	player2VelY -= g;
+}
+
 void Player2::checkTileCollision(std::vector<Tile*> tiles, int index)
 {
 	float left = getRight() - tiles[index]->getLeft();
@@ -266,6 +292,14 @@ void Player2::checkTileCollision(std::vector<Tile*> tiles, int index)
 		float separationY;
 		left < right ? separationX = -left : separationX = right;
 		top < bottom ? separationY = -top : separationY = bottom;
+		if (separationY < 0 && !jumping)
+		{
+			player2VelY = 0;
+		}
+		else if (separationY > 0 && jumping)
+		{
+			player2VelY = 0;
+		}
 		if (abs(separationX) < abs(separationY))
 		{
 			 separationY = 0;

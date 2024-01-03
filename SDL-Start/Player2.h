@@ -26,6 +26,18 @@ private:
 	bool left;
 	bool right;
 
+	float h = 260;
+	float t = 2;
+
+	bool jumpPressed = false;
+	bool jumping = false;
+	
+	float v0;
+	float vx = player2VelStep / 1;
+	float xh = 300;
+	float g = - 2 * h * pow(vx, 2) / pow(xh, 2);
+	//float g = 0;
+
 public:
 	Player2(int levelWidth, int levelHeight, int startX, int startY, int textureWidth, int textureHeight);
 	int LEVEL_WIDTH;
@@ -62,5 +74,7 @@ public:
 	float getTop();
 	float getBottom();
 	float clamp(float x, float min, float max);
+	float jump();
+	void gravitation();
 };
 
