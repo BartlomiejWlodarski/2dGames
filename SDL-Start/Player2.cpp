@@ -96,7 +96,11 @@ void Player2::setPlayer2VelY(float value)
 
 void Player2::movePlayer2(int stopX, int stopY, std::vector <Tile*> tiles)
 {
-	gravitation();
+	if (signChangePositiveToNegative(player2VelY, player2VelY - g))
+	{
+		jumpSecondPhase();
+	}
+	player2VelY -= g;
 	
 	//checkCameraWindow(stopX, stopY);
 	//Move the dot left or right
@@ -132,20 +136,37 @@ void Player2::playerKeyPressed(SDL_Keycode sym)
 	switch (sym)
 	{
 	case SDLK_UP: player2VelY -= (player2VelStep * (1 - smooth)) + (player2VelY * smooth);
-		std::cout << "Up arrow pressed" << "\n";
+		//std::cout << "Up arrow pressed" << "\n";
 		up = true;
 		break;
 	case SDLK_DOWN: player2VelY += (player2VelStep * (1 - smooth)) + (player2VelY * smooth);
-		std::cout << "Down arrow pressed" << "\n";
+		//std::cout << "Down arrow pressed" << "\n";
 		down = true;
 		break;
 	case SDLK_LEFT: player2VelX -= (player2VelStep * (1 - smooth)) + (player2VelX * smooth);
-		std::cout << "Left arrow pressed" << "\n";
+		//std::cout << "Left arrow pressed" << "\n";
 		left = true;
 		break;
 	case SDLK_RIGHT: player2VelX += (player2VelStep * (1 - smooth)) + (player2VelX * smooth);
-		std::cout << "Right arrow pressed" << "\n";
+		//std::cout << "Right arrow pressed" << "\n";
 		right = true;
+		break;
+	case SDLK_LCTRL: 
+		fallOption++;
+		fallOption = fallOption % 3;
+
+		if (fallOption == 0)
+		{
+			cout << "Normal fall" << endl;
+		}
+		else if (fallOption == 1)
+		{
+			cout << "Quick fall" << endl;
+		}
+		else if (fallOption == 2)
+		{
+			cout << "Double jump" << endl;
+		}
 		break;
 	case SDLK_SPACE: 
 		if (!jumping)
@@ -163,22 +184,24 @@ void Player2::playerKeyReleased(SDL_Keycode sym)
 	switch (sym)
 	{
 	case SDLK_UP: player2VelY = 0;
-		std::cout << "Up arrow released" << "\n";
+		//std::cout << "Up arrow released" << "\n";
 		up = false;
 		break;
 	case SDLK_DOWN: player2VelY = 0;
-		std::cout << "Down arrow released" << "\n";
+		//std::cout << "Down arrow released" << "\n";
 		down = false;
 		break;
 	case SDLK_LEFT: player2VelX = 0;
-		std::cout << "Left arrow released" << "\n";
+		//std::cout << "Left arrow released" << "\n";
 		left = false;
 		break;
 	case SDLK_RIGHT: player2VelX = 0;
-		std::cout << "Right arrow released" << "\n";
+		//std::cout << "Right arrow released" << "\n";
 		right = false;
 		break;
 	case SDLK_SPACE: 
+		if (jumping)
+			afterFall();
 		jumping = false;
 		break;
 	}
@@ -265,18 +288,67 @@ float Player2::clamp(float x, float min, float max)
 	}
 }
 
-float Player2::jump()
+void Player2::jump()
 {
-	v0 = 2 * h * (vx) / xh;
-	player2VelY = -v0;
-	//g = -2 * h * pow(vx, 2) / pow(xh, 2);
-	return 0;
+	if (jumps < jumpLimit)
+	{
+		v0 = 2 * h * (vx) / xh;
+		player2VelY = -v0;
+		jumps++;
+		jumpLimit = 1;
+		cout << "g = " << g << endl;
+		cout << "v0 = " << v0 << endl;
+	}
 }
+
+void Player2::jumpSecondPhase()
+{
+	jumping = false;
+	switch (fallOption)
+	{
+	case 0:
+		
+		break;
+	case 1:
+		g = 3 * g;
+		break;
+	case 2:
+		jumpLimit = 2;
+
+	}
+	cout << "Fall " << endl;
+	cout << "g = " << g << endl;
+}
+
+void Player2::afterFall()
+{
+	player2VelY = 0;
+	g = -2 * h * pow(vx, 2) / pow(xh, 2);
+	jumps = 0;
+	
+}
+
+bool Player2::signChangePositiveToNegative(float oldValue, float newValue)
+{
+	//if ((oldValue > 0 && newValue > 0) || (oldValue < 0 && newValue < 0))
+	//	return false;
+	//else
+	//	return true;
+
+	if (oldValue < 0 && newValue > 0)
+		return true;
+	else
+		return false;
+}
+
+
 
 void Player2::gravitation()
 {
 	player2VelY -= g;
 }
+
+
 
 void Player2::checkTileCollision(std::vector<Tile*> tiles, int index)
 {
@@ -292,14 +364,7 @@ void Player2::checkTileCollision(std::vector<Tile*> tiles, int index)
 		float separationY;
 		left < right ? separationX = -left : separationX = right;
 		top < bottom ? separationY = -top : separationY = bottom;
-		if (separationY < 0 && !jumping)
-		{
-			player2VelY = 0;
-		}
-		else if (separationY > 0 && jumping)
-		{
-			player2VelY = 0;
-		}
+
 		if (abs(separationX) < abs(separationY))
 		{
 			 separationY = 0;
@@ -308,7 +373,14 @@ void Player2::checkTileCollision(std::vector<Tile*> tiles, int index)
 		{
 			separationX = 0;
 		}
-
+		if (separationY < 0 )
+		{
+			afterFall();
+		}
+		else if (separationY > 0 && posX < getRight() && posX > getLeft())
+		{
+			afterFall();
+		}
 		posX += separationX;
 		posY += separationY;
 	}

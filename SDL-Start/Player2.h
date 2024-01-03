@@ -36,6 +36,8 @@ private:
 	float vx = player2VelStep / 1;
 	float xh = 300;
 	float g = - 2 * h * pow(vx, 2) / pow(xh, 2);
+	int jumps = 0;
+	int jumpLimit = 1;
 	//float g = 0;
 
 public:
@@ -49,6 +51,7 @@ public:
 	int height;
 	float posX;
 	float posY;
+	int fallOption = 0;
 	int getPlayer2Size();
 	void setPlayer2Size(int value);
 	int getPlayer2Width();
@@ -74,7 +77,10 @@ public:
 	float getTop();
 	float getBottom();
 	float clamp(float x, float min, float max);
-	float jump();
+	void jump();
+	void jumpSecondPhase();
 	void gravitation();
+	bool signChangePositiveToNegative(float oldValue, float newValue);
+	void afterFall();
 };
 
