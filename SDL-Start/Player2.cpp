@@ -129,6 +129,7 @@ void Player2::movePlayer2(int stopX, int stopY, std::vector <Tile*> tiles)
 
 	player2PosY = int(posY);
 	findCollidableTiles(tiles);
+	//cout << "Jumping: " << to_string(jumping) << endl;
 }
 
 void Player2::playerKeyPressed(SDL_Keycode sym)
@@ -169,10 +170,14 @@ void Player2::playerKeyPressed(SDL_Keycode sym)
 		}
 		break;
 	case SDLK_SPACE: 
-		if (!jumping)
+		if (!jumping && jumps < jumpLimit)
 		{
 			jumping = true;
 			jump();
+		}
+		else
+		{
+			int i = 0;
 		}
 
 		break;
@@ -199,10 +204,11 @@ void Player2::playerKeyReleased(SDL_Keycode sym)
 		//std::cout << "Right arrow released" << "\n";
 		right = false;
 		break;
-	case SDLK_SPACE: 
-		if (jumping)
-			afterFall();
-		jumping = false;
+	case SDLK_SPACE: if (jumping)
+		{
+			cout << "Space released" << endl;
+			player2VelY = -0.000001;
+		}
 		break;
 	}
 }
@@ -290,14 +296,18 @@ float Player2::clamp(float x, float min, float max)
 
 void Player2::jump()
 {
+	if (jumps >= 1)
+	{
+		int i = 0;
+	}
 	if (jumps < jumpLimit)
 	{
 		v0 = 2 * h * (vx) / xh;
 		player2VelY = -v0;
 		jumps++;
 		jumpLimit = 1;
-		cout << "g = " << g << endl;
-		cout << "v0 = " << v0 << endl;
+		//cout << "g = " << g << endl;
+		//cout << "v0 = " << v0 << endl;
 	}
 }
 
@@ -314,10 +324,11 @@ void Player2::jumpSecondPhase()
 		break;
 	case 2:
 		jumpLimit = 2;
+		break;
 
 	}
-	cout << "Fall " << endl;
-	cout << "g = " << g << endl;
+	//cout << "Fall " << endl;
+	//cout << "g = " << g << endl;
 }
 
 void Player2::afterFall()
@@ -325,6 +336,7 @@ void Player2::afterFall()
 	player2VelY = 0;
 	g = -2 * h * pow(vx, 2) / pow(xh, 2);
 	jumps = 0;
+	jumping = false;
 	
 }
 
