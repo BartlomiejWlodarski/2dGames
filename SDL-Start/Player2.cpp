@@ -154,7 +154,7 @@ void Player2::playerKeyPressed(SDL_Keycode sym)
 		break;
 	case SDLK_LCTRL: 
 		fallOption++;
-		fallOption = fallOption % 3;
+		fallOption = fallOption % 4;
 
 		if (fallOption == 0)
 		{
@@ -167,6 +167,10 @@ void Player2::playerKeyPressed(SDL_Keycode sym)
 		else if (fallOption == 2)
 		{
 			cout << "Double jump" << endl;
+		}
+		else if (fallOption == 3)
+		{
+			cout << "Jumps with variable height" << endl;
 		}
 		break;
 	case SDLK_SPACE: 
@@ -181,7 +185,37 @@ void Player2::playerKeyPressed(SDL_Keycode sym)
 		}
 
 		break;
+	case SDLK_1:
+		h -= 10;
+		cout << "h = " << h << endl;
+		cout << "xh = " << xh << endl;
+		cout << "g = " << g << endl;
+		cout << "v0 = " << v0 << endl;
+		break;
+	case SDLK_2:
+		h += 10;
+		cout << "h = " << h << endl;
+		cout << "xh = " << xh << endl;
+		cout << "g = " << g << endl;
+		cout << "v0 = " << v0 << endl;
+		break;
+	case SDLK_8:
+		xh -= 10;
+		cout << "h = " << h << endl;
+		cout << "xh = " << xh << endl;
+		cout << "g = " << g << endl;
+		cout << "v0 = " << v0 << endl;
+		break;
+	case SDLK_9:
+		xh += 10;
+		cout << "h = " << h << endl;
+		cout << "xh = " << xh << endl;
+		cout << "g = " << g << endl;
+		cout << "v0 = " << v0 << endl;
+		break;
 	}
+	
+
 }
 
 void Player2::playerKeyReleased(SDL_Keycode sym)
@@ -204,7 +238,7 @@ void Player2::playerKeyReleased(SDL_Keycode sym)
 		//std::cout << "Right arrow released" << "\n";
 		right = false;
 		break;
-	case SDLK_SPACE: if (jumping)
+	case SDLK_SPACE: if (jumping && fallOption == 3)
 		{
 			cout << "Space released" << endl;
 			player2VelY = -0.000001;
@@ -306,6 +340,8 @@ void Player2::jump()
 		player2VelY = -v0;
 		jumps++;
 		jumpLimit = 1;
+		//cout << "h = " << h << endl;
+		//cout << "xh = " << xh << endl;
 		//cout << "g = " << g << endl;
 		//cout << "v0 = " << v0 << endl;
 	}
@@ -327,8 +363,8 @@ void Player2::jumpSecondPhase()
 		break;
 
 	}
-	//cout << "Fall " << endl;
-	//cout << "g = " << g << endl;
+	/*cout << "Fall " << endl;
+	cout << "g = " << g << endl;*/
 }
 
 void Player2::afterFall()
@@ -351,6 +387,11 @@ bool Player2::signChangePositiveToNegative(float oldValue, float newValue)
 		return true;
 	else
 		return false;
+}
+
+void Player2::changeJumpParameters()
+{
+
 }
 
 

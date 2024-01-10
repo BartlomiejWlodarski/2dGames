@@ -26,7 +26,7 @@ private:
 	bool left;
 	bool right;
 
-	float h = 260;
+	float h = 250;
 	float t = 2;
 
 	bool jumpPressed = false;
@@ -34,7 +34,7 @@ private:
 	
 	float v0;
 	float vx = player2VelStep / 1;
-	float xh = 300;
+	float xh = 260;
 	float g = - 2 * h * pow(vx, 2) / pow(xh, 2);
 	int jumps = 0;
 	int jumpLimit = 1;
@@ -82,5 +82,6 @@ public:
 	void gravitation();
 	bool signChangePositiveToNegative(float oldValue, float newValue);
 	void afterFall();
+	void changeJumpParameters();
 };
 
