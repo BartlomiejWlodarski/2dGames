@@ -29,12 +29,19 @@ const int SCREEN_HEIGHT = 720;
 int LEVEL_WIDTH = 8000;
 int LEVEL_HEIGHT = 1280;
 
+//Layer constants
+const int LAYER2_WIDTH = 6400;
+const int LAYER2_HEIGHT = 1280;
+
 //Tile constants
 const int TILE_WIDTH = 80;
 const int TILE_HEIGHT = 80;
+const int TILE_WIDTH2 = 64;
+const int TILE_HEIGHT2 = 64;
 int TOTAL_TILES = 1600;
+int TOTAL_TILES2 = 2000;
 const int TOTAL_TILE_SPRITES = 12;
-int TILES_IN_ONE_DIMENSION = 16;
+const int TOTAL_TILE_SPRITES2 = 9;
 
 //The different tile sprites
 const int TILE_DIRT = 0;
@@ -70,6 +77,7 @@ int currentLevel = 1;
 
 //Tile* tileSet[TOTAL_TILES];
 std::vector <Tile*> tileSet;
+std::vector <Tile*> tileSet2;
 
 //Starts up SDL and creates window
 bool init();
@@ -82,6 +90,7 @@ void close();
 
 //Sets tiles from the map file
 bool setTiles();
+bool setTiles2();
 
 //The window we'll be rendering to
 SDL_Window* gWindow = NULL;
@@ -92,10 +101,12 @@ SDL_Renderer* gRenderer = NULL;
 LTexture gPlayer2Texture;
 LTexture gPlayer1Texture;
 LTexture gTileTexture;
+LTexture gTileTexture2;
 LTexture gCircleTexture;
 LTexture gTargetTexture;
 LTexture gArrowTexture;
 SDL_Rect gTileClips[TOTAL_TILE_SPRITES];
+SDL_Rect gTileClips2[TOTAL_TILE_SPRITES2];
 
 //Player1 constants and variables
 Player1 player1(LEVEL_WIDTH, LEVEL_HEIGHT, 500, 500, gPlayer1Texture.getWidth(), gPlayer1Texture.getHeight());
@@ -111,6 +122,12 @@ void renderTile(Tile* tile, SDL_Rect& camera)
 	gTileTexture.render(gRenderer, tile->getBox().x - camera.x, tile->getBox().y - camera.y, &gTileClips[tile->getType()]);
 }
 
+
+void renderTile2(Tile* tile, SDL_Rect& camera)
+{
+	//Show the tile
+	gTileTexture2.render(gRenderer, tile->getBox().x - (camera.x * 0.5), tile->getBox().y - camera.y + 16, &gTileClips2[tile->getType()]);
+}
 
 bool init()
 {
@@ -225,16 +242,29 @@ bool loadMedia(std::vector <Tile*> tiles)
 		success = false;
 	}
 
+	if (!gTileTexture2.loadFromFile("textures/assets64x64.png", gRenderer))
+	{
+		printf("Failed to load assets texture!\n");
+		success = false;
+	}
+
 	//Load tile map
 	if (!setTiles())
 	{
 		printf("Failed to load tile set!\n");
 		success = false;
 	}
+
+	//Load tile map
+	if (!setTiles2())
+	{
+		printf("Failed to load assets tile set!\n");
+		success = false;
+	}
 	return success;
 }
 
-void close(std::vector <Tile*> tiles)
+void close(std::vector <Tile*> tiles, std::vector <Tile*> tiles2)
 {
 	//Deallocate tiles
 	for (int i = 0; i < TOTAL_TILES; ++i)
@@ -246,10 +276,21 @@ void close(std::vector <Tile*> tiles)
 		}
 	}
 
+	//Deallocate tiles
+	for (int i = 0; i < TOTAL_TILES2; ++i)
+	{
+		if (tiles2[i] != NULL)
+		{
+			delete tiles2[i];
+			tiles2[i] = NULL;
+		}
+	}
+
 	//Free loaded images
 	gPlayer2Texture.free();
 	gPlayer1Texture.free();
 	gTileTexture.free();
+	gTileTexture2.free();
 
 	//Destroy window	
 	SDL_DestroyRenderer(gRenderer);
@@ -471,6 +512,142 @@ bool setTiles()
 	return tilesLoaded;
 }
 
+bool setTiles2()
+{
+	// Update tile data
+	Tile* tile = new Tile(0, 0, 0, 0, 0);
+
+
+	for (int i = tileSet2.size(); i < TOTAL_TILES2; i++)
+	{
+		tileSet2.push_back(tile);
+	}
+	delete tile;
+
+
+	//Success flag
+	bool tilesLoaded = true;
+
+	//The tile offsets
+	int x = 0, y = 0;
+
+	//string mapPath = "maps/labyrinth" + to_string(currentLevel) + ".map";
+	string mapPath = "maps/z14layer2.map";
+
+	//Open the map
+	std::ifstream map(mapPath);
+
+	//If the map couldn't be loaded
+	if (map.fail())
+	{
+		printf("Unable to load map file!\n");
+		tilesLoaded = false;
+	}
+	else
+	{
+		//Initialize the tiles
+		for (int i = 0; i < TOTAL_TILES2; ++i)
+		{
+			//Determines what kind of tile will be made
+			int tileType = -1;
+
+			//Read tile from map file
+			map >> tileType;
+
+			//If the was a problem in reading the map
+			if (map.fail())
+			{
+				//Stop loading map
+				printf("Error loading map: Unexpected end of file!\n");
+				tilesLoaded = false;
+				break;
+			}
+
+			//If the number is a valid tile number
+			if ((tileType >= 0) && (tileType < TOTAL_TILE_SPRITES2))
+			{
+				tileSet2[i] = new Tile(x, y, tileType, TILE_WIDTH2, TILE_HEIGHT2);
+			}
+			//If we don't recognize the tile type
+			else
+			{
+				//Stop loading map
+				printf("Error loading map: Invalid tile type at %d!\n", i);
+				tilesLoaded = false;
+				break;
+			}
+
+			//Move to next tile spot
+			x += TILE_WIDTH2;
+
+			//If we've gone too far
+			if (x >= LAYER2_WIDTH)
+			{
+				//Move back
+				x = 0;
+
+				//Move to the next row
+				y += TILE_HEIGHT2;
+			}
+		}
+
+		//Clip the sprite sheet
+		if (tilesLoaded)
+		{
+			gTileClips2[0].x = 0;
+			gTileClips2[0].y = 0;
+			gTileClips2[0].w = TILE_WIDTH2;
+			gTileClips2[0].h = TILE_HEIGHT2;
+
+			gTileClips2[1].x = 0;
+			gTileClips2[1].y = 64;
+			gTileClips2[1].w = TILE_WIDTH2;
+			gTileClips2[1].h = TILE_HEIGHT2;
+
+			gTileClips2[2].x = 0;
+			gTileClips2[2].y = 128;
+			gTileClips2[2].w = TILE_WIDTH2;
+			gTileClips2[2].h = TILE_HEIGHT2;
+
+			gTileClips2[3].x = 64;
+			gTileClips2[3].y = 0;
+			gTileClips2[3].w = TILE_WIDTH2;
+			gTileClips2[3].h = TILE_HEIGHT2;
+
+			gTileClips2[4].x = 64;
+			gTileClips2[4].y = 64;
+			gTileClips2[4].w = TILE_WIDTH2;
+			gTileClips2[4].h = TILE_HEIGHT2;
+
+			gTileClips2[5].x = 64;
+			gTileClips2[5].y = 128;
+			gTileClips2[5].w = TILE_WIDTH2;
+			gTileClips2[5].h = TILE_HEIGHT2;
+
+			gTileClips2[6].x = 128;
+			gTileClips2[6].y = 0;
+			gTileClips2[6].w = TILE_WIDTH2;
+			gTileClips2[6].h = TILE_HEIGHT2;
+
+			gTileClips2[7].x = 128;
+			gTileClips2[7].y = 64;
+			gTileClips2[7].w = TILE_WIDTH2;
+			gTileClips2[7].h = TILE_HEIGHT2;
+
+			gTileClips2[8].x = 160;
+			gTileClips2[8].y = 160;
+			gTileClips2[8].w = TILE_WIDTH2;
+			gTileClips2[8].h = TILE_HEIGHT2;
+		}
+	}
+
+	//Close the file
+	map.close();
+
+	//If the map was loaded fine
+	return tilesLoaded;
+}
+
 
 void cameraMenu(Camera* camera)
 {
@@ -555,7 +732,6 @@ void randomizeSpawnLocations(Player1* p1, Player2* p2, Target* t)
 	}
 }
 
-void loadNewLevel();
 
 int main(int argc, char* args[])
 {
@@ -680,25 +856,20 @@ int main(int argc, char* args[])
 					//}
 
 					//Clear screen
-					SDL_SetRenderDrawColor(gRenderer, 0x05, 0x08, 0x1B, 0xFF);
+					SDL_SetRenderDrawColor(gRenderer, 0x4C, 0x40, 0x8E, 0xFF);
 					SDL_RenderClear(gRenderer);
 
+					
+					//Render layer
+					for (int i = 0; i < TOTAL_TILES2; ++i)
+					{
+						renderTile2(tileSet2[i], camera.camera);
+					}
+					
 					//Render level
 					for (int i = 0; i < TOTAL_TILES; ++i)
 					{
-						if (i == 237)
-						{
-							gTileTexture.setWidth(gTileTexture.getWidth() * 2);
-							gTileTexture.setHeight(gTileTexture.getHeight() * 2);
-							renderTile(tileSet[i], camera.camera);
-							gTileTexture.setWidth(gTileTexture.getWidth() / 2);
-							gTileTexture.setHeight(gTileTexture.getHeight() / 2);
-						}
-						else
-						{
-							renderTile(tileSet[i], camera.camera);
-						}
-						
+						renderTile(tileSet[i], camera.camera);
 					}
 
 					//Render target
@@ -775,7 +946,7 @@ int main(int argc, char* args[])
 		
 
 		//Free resources and close SDL
-		close(tileSet);
+		close(tileSet, tileSet2);
 	}
 	return 0;
 }
