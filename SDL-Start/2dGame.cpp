@@ -26,13 +26,13 @@ const int SCREEN_WIDTH = 1040;
 const int SCREEN_HEIGHT = 720;
 
 //Level dimension constants
-int LEVEL_WIDTH = 1280;
+int LEVEL_WIDTH = 8000;
 int LEVEL_HEIGHT = 1280;
 
 //Tile constants
 const int TILE_WIDTH = 80;
 const int TILE_HEIGHT = 80;
-int TOTAL_TILES = 256;
+int TOTAL_TILES = 1600;
 const int TOTAL_TILE_SPRITES = 12;
 int TILES_IN_ONE_DIMENSION = 16;
 
@@ -62,7 +62,7 @@ const int camWindowY2 = SCREEN_HEIGHT * 6 / 8;
 
 float scale = 1;
 
-int cameraOption;
+int cameraOption = 1;
 bool separation = false;
 bool ballCollision = false;
 
@@ -174,7 +174,7 @@ bool loadMedia(std::vector <Tile*> tiles)
 	bool success = true;
 
 	//Load player2 texture
-	if (!gPlayer2Texture.loadFromFile("textures/amongus.png", gRenderer))
+	if (!gPlayer2Texture.loadFromFile("textures/knight64x64.png", gRenderer))
 	{
 		printf("Failed to load player2 texture!\n");
 		success = false;
@@ -219,7 +219,7 @@ bool loadMedia(std::vector <Tile*> tiles)
 	gArrowTexture.setBlendMode(SDL_BLENDMODE_BLEND);
 	//gPlayer1Texture.setAlpha(100);
 
-	if (!gTileTexture.loadFromFile("textures/tiles.png", gRenderer))
+	if (!gTileTexture.loadFromFile("textures/tiles2.png", gRenderer))
 	{
 		printf("Failed to load tile set texture!\n");
 		success = false;
@@ -311,14 +311,16 @@ bool setTiles()
 {
 	// Update tile data
 	Tile* tile = new Tile(0, 0, 0, 0, 0);
-	TOTAL_TILES = pow(16 + (currentLevel - 1) * 2, 2);
-	LEVEL_WIDTH = (16 + (currentLevel - 1) * 2) * 80;
-	LEVEL_HEIGHT = (16 + (currentLevel - 1) * 2) * 80;
-	player1.LEVEL_WIDTH = (16 + (currentLevel - 1) * 2) * 80;
-	player1.LEVEL_HEIGHT = (16 + (currentLevel - 1) * 2) * 80;
-	player2.LEVEL_WIDTH = (16 + (currentLevel - 1) * 2) * 80;
-	player2.LEVEL_HEIGHT = (16 + (currentLevel - 1) * 2) * 80;
-	TILES_IN_ONE_DIMENSION = (16 + (currentLevel - 1) * 2);
+	//TOTAL_TILES = pow(16 + (currentLevel - 1) * 2, 2);
+	//LEVEL_WIDTH = (16 + (currentLevel - 1) * 2) * 80;
+	//LEVEL_HEIGHT = (16 + (currentLevel - 1) * 2) * 80;
+	//TILES_IN_ONE_DIMENSION = (16 + (currentLevel - 1) * 2);
+
+	player1.LEVEL_WIDTH = LEVEL_WIDTH;
+	player1.LEVEL_HEIGHT = LEVEL_HEIGHT;
+	player2.LEVEL_WIDTH = LEVEL_WIDTH;
+	player2.LEVEL_HEIGHT = LEVEL_HEIGHT;
+
 	player1.tilesX = LEVEL_WIDTH / 80;
 	player1.tilesY = LEVEL_HEIGHT / 80;
 	player2.tilesX = LEVEL_WIDTH / 80;
@@ -337,7 +339,8 @@ bool setTiles()
 	//The tile offsets
 	int x = 0, y = 0;
 
-	string mapPath = "maps/labyrinth" + to_string(currentLevel) + ".map";
+	//string mapPath = "maps/labyrinth" + to_string(currentLevel) + ".map";
+	string mapPath = "maps/z14.map";
 
 	//Open the map
 	std::ifstream map(mapPath);
@@ -576,8 +579,8 @@ int main(int argc, char* args[])
 			else
 			{
 				//Scale the player2 texture and update the position accordingly
-				gPlayer2Texture.setWidth(gPlayer2Texture.getWidth() / 8);
-				gPlayer2Texture.setHeight(gPlayer2Texture.getHeight() / 8);
+				//gPlayer2Texture.setWidth(gPlayer2Texture.getWidth() * 5);
+				//gPlayer2Texture.setHeight(gPlayer2Texture.getHeight() * 5);
 				//player2.setPlayer2PosX(player2.getPlayer2PosX() + (gPlayer2Texture.getWidth() / 2));
 				//player2.setPlayer2PosY(player2.getPlayer2PosY() + (gPlayer2Texture.getHeight() / 2));
 
@@ -677,13 +680,25 @@ int main(int argc, char* args[])
 					//}
 
 					//Clear screen
-					SDL_SetRenderDrawColor(gRenderer, 0x00, 0xFF, 0xFF, 0xFF);
+					SDL_SetRenderDrawColor(gRenderer, 0x05, 0x08, 0x1B, 0xFF);
 					SDL_RenderClear(gRenderer);
 
 					//Render level
 					for (int i = 0; i < TOTAL_TILES; ++i)
 					{
-						renderTile(tileSet[i], camera.camera);
+						if (i == 237)
+						{
+							gTileTexture.setWidth(gTileTexture.getWidth() * 2);
+							gTileTexture.setHeight(gTileTexture.getHeight() * 2);
+							renderTile(tileSet[i], camera.camera);
+							gTileTexture.setWidth(gTileTexture.getWidth() / 2);
+							gTileTexture.setHeight(gTileTexture.getHeight() / 2);
+						}
+						else
+						{
+							renderTile(tileSet[i], camera.camera);
+						}
+						
 					}
 
 					//Render target
