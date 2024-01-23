@@ -32,30 +32,17 @@ int LEVEL_HEIGHT = 1280;
 //Layer constants
 const int LAYER2_WIDTH = 6400;
 const int LAYER2_HEIGHT = 1280;
+float layer2multiplier = 0.5;
 
 //Tile constants
-const int TILE_WIDTH = 80;
-const int TILE_HEIGHT = 80;
+const int TILE_WIDTH = 64;
+const int TILE_HEIGHT = 64;
 const int TILE_WIDTH2 = 64;
 const int TILE_HEIGHT2 = 64;
-int TOTAL_TILES = 1600;
+int TOTAL_TILES = 2500;
 int TOTAL_TILES2 = 2000;
-const int TOTAL_TILE_SPRITES = 12;
+const int TOTAL_TILE_SPRITES = 9;
 const int TOTAL_TILE_SPRITES2 = 9;
-
-//The different tile sprites
-const int TILE_DIRT = 0;
-const int TILE_GRASS = 1;
-const int TILE_STONE = 2;
-const int TILE_CENTER = 7;
-const int TILE_TOP = 6;
-const int TILE_TOPRIGHT = 9;
-const int TILE_RIGHT = 10;
-const int TILE_BOTTOMRIGHT = 11;
-const int TILE_BOTTOM = 8;
-const int TILE_BOTTOMLEFT = 5;
-const int TILE_LEFT = 4;
-const int TILE_TOPLEFT = 3;
 
 const int camLineX1 = SCREEN_WIDTH / 2;
 const int camLineY1 = SCREEN_HEIGHT / 4;
@@ -126,7 +113,8 @@ void renderTile(Tile* tile, SDL_Rect& camera)
 void renderTile2(Tile* tile, SDL_Rect& camera)
 {
 	//Show the tile
-	gTileTexture2.render(gRenderer, tile->getBox().x - (camera.x * 0.5), tile->getBox().y - camera.y + 16, &gTileClips2[tile->getType()]);
+	gTileTexture2.render(gRenderer, tile->getBox().x - (camera.x * layer2multiplier), tile->getBox().y - camera.y, &gTileClips2[tile->getType()]);
+	//gTileTexture2.render(gRenderer, tile->getBox().x - (camera.x * layer2multiplier), tile->getBox().y - (camera.y * layer2multiplier) - (516 * layer2multiplier), &gTileClips2[tile->getType()]);
 }
 
 bool init()
@@ -236,7 +224,7 @@ bool loadMedia(std::vector <Tile*> tiles)
 	gArrowTexture.setBlendMode(SDL_BLENDMODE_BLEND);
 	//gPlayer1Texture.setAlpha(100);
 
-	if (!gTileTexture.loadFromFile("textures/tiles2.png", gRenderer))
+	if (!gTileTexture.loadFromFile("textures/assets64x64.png", gRenderer))
 	{
 		printf("Failed to load tile set texture!\n");
 		success = false;
@@ -362,10 +350,10 @@ bool setTiles()
 	player2.LEVEL_WIDTH = LEVEL_WIDTH;
 	player2.LEVEL_HEIGHT = LEVEL_HEIGHT;
 
-	player1.tilesX = LEVEL_WIDTH / 80;
-	player1.tilesY = LEVEL_HEIGHT / 80;
-	player2.tilesX = LEVEL_WIDTH / 80;
-	player2.tilesY = LEVEL_HEIGHT / 80;
+	player1.tilesX = LEVEL_WIDTH / TILE_WIDTH;
+	player1.tilesY = LEVEL_HEIGHT / TILE_HEIGHT;
+	player2.tilesX = LEVEL_WIDTH / TILE_WIDTH;
+	player2.tilesY = LEVEL_HEIGHT / TILE_HEIGHT;
 
 	for (int i = tileSet.size(); i < TOTAL_TILES; i++)
 	{
@@ -443,65 +431,50 @@ bool setTiles()
 		//Clip the sprite sheet
 		if (tilesLoaded)
 		{
-			gTileClips[TILE_DIRT].x = 0;
-			gTileClips[TILE_DIRT].y = 0;
-			gTileClips[TILE_DIRT].w = TILE_WIDTH;
-			gTileClips[TILE_DIRT].h = TILE_HEIGHT;
+			gTileClips[0].x = 0;
+			gTileClips[0].y = 0;
+			gTileClips[0].w = TILE_WIDTH2;
+			gTileClips[0].h = TILE_HEIGHT2;
 
-			gTileClips[TILE_GRASS].x = 0;
-			gTileClips[TILE_GRASS].y = 80;
-			gTileClips[TILE_GRASS].w = TILE_WIDTH;
-			gTileClips[TILE_GRASS].h = TILE_HEIGHT;
+			gTileClips[1].x = 0;
+			gTileClips[1].y = 64;
+			gTileClips[1].w = TILE_WIDTH2;
+			gTileClips[1].h = TILE_HEIGHT2;
 
-			gTileClips[TILE_STONE].x = 0;
-			gTileClips[TILE_STONE].y = 160;
-			gTileClips[TILE_STONE].w = TILE_WIDTH;
-			gTileClips[TILE_STONE].h = TILE_HEIGHT;
+			gTileClips[2].x = 0;
+			gTileClips[2].y = 128;
+			gTileClips[2].w = TILE_WIDTH2;
+			gTileClips[2].h = TILE_HEIGHT2;
 
-			gTileClips[TILE_TOPLEFT].x = 80;
-			gTileClips[TILE_TOPLEFT].y = 0;
-			gTileClips[TILE_TOPLEFT].w = TILE_WIDTH;
-			gTileClips[TILE_TOPLEFT].h = TILE_HEIGHT;
+			gTileClips[3].x = 64;
+			gTileClips[3].y = 0;
+			gTileClips[3].w = TILE_WIDTH2;
+			gTileClips[3].h = TILE_HEIGHT2;
 
-			gTileClips[TILE_LEFT].x = 80;
-			gTileClips[TILE_LEFT].y = 80;
-			gTileClips[TILE_LEFT].w = TILE_WIDTH;
-			gTileClips[TILE_LEFT].h = TILE_HEIGHT;
+			gTileClips[4].x = 64;
+			gTileClips[4].y = 64;
+			gTileClips[4].w = TILE_WIDTH2;
+			gTileClips[4].h = TILE_HEIGHT2;
 
-			gTileClips[TILE_BOTTOMLEFT].x = 80;
-			gTileClips[TILE_BOTTOMLEFT].y = 160;
-			gTileClips[TILE_BOTTOMLEFT].w = TILE_WIDTH;
-			gTileClips[TILE_BOTTOMLEFT].h = TILE_HEIGHT;
+			gTileClips[5].x = 64;
+			gTileClips[5].y = 128;
+			gTileClips[5].w = TILE_WIDTH2;
+			gTileClips[5].h = TILE_HEIGHT2;
 
-			gTileClips[TILE_TOP].x = 160;
-			gTileClips[TILE_TOP].y = 0;
-			gTileClips[TILE_TOP].w = TILE_WIDTH;
-			gTileClips[TILE_TOP].h = TILE_HEIGHT;
+			gTileClips[6].x = 128;
+			gTileClips[6].y = 0;
+			gTileClips[6].w = TILE_WIDTH2;
+			gTileClips[6].h = TILE_HEIGHT2;
 
-			gTileClips[TILE_CENTER].x = 160;
-			gTileClips[TILE_CENTER].y = 80;
-			gTileClips[TILE_CENTER].w = TILE_WIDTH;
-			gTileClips[TILE_CENTER].h = TILE_HEIGHT;
+			gTileClips[7].x = 128;
+			gTileClips[7].y = 64;
+			gTileClips[7].w = TILE_WIDTH2;
+			gTileClips[7].h = TILE_HEIGHT2;
 
-			gTileClips[TILE_BOTTOM].x = 160;
-			gTileClips[TILE_BOTTOM].y = 160;
-			gTileClips[TILE_BOTTOM].w = TILE_WIDTH;
-			gTileClips[TILE_BOTTOM].h = TILE_HEIGHT;
-
-			gTileClips[TILE_TOPRIGHT].x = 240;
-			gTileClips[TILE_TOPRIGHT].y = 0;
-			gTileClips[TILE_TOPRIGHT].w = TILE_WIDTH;
-			gTileClips[TILE_TOPRIGHT].h = TILE_HEIGHT;
-
-			gTileClips[TILE_RIGHT].x = 240;
-			gTileClips[TILE_RIGHT].y = 80;
-			gTileClips[TILE_RIGHT].w = TILE_WIDTH;
-			gTileClips[TILE_RIGHT].h = TILE_HEIGHT;
-
-			gTileClips[TILE_BOTTOMRIGHT].x = 240;
-			gTileClips[TILE_BOTTOMRIGHT].y = 160;
-			gTileClips[TILE_BOTTOMRIGHT].w = TILE_WIDTH;
-			gTileClips[TILE_BOTTOMRIGHT].h = TILE_HEIGHT;
+			gTileClips[8].x = 160;
+			gTileClips[8].y = 160;
+			gTileClips[8].w = TILE_WIDTH2;
+			gTileClips[8].h = TILE_HEIGHT2;
 		}
 	}
 
@@ -710,7 +683,8 @@ void randomizeSpawnLocations(Player1* p1, Player2* p2, Target* t)
 	success = false;
 	while (!success)
 	{
-		randomTile2 = rand() % TOTAL_TILES;
+		//randomTile2 = rand() % TOTAL_TILES;
+		randomTile2 = 130;
 		if (tileSet[randomTile2]->getType() < 3 && randomTile2 != randomTile)
 		{
 			p2->setPlayer2PosX(tileSet[randomTile2]->getBox().x + 0.5 * tileSet[randomTile2]->getBox().w);
@@ -780,6 +754,7 @@ int main(int argc, char* args[])
 
 
 				randomizeSpawnLocations(&player1, &player2, &target);
+
 
 
 

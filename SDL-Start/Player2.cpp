@@ -269,8 +269,8 @@ void Player2::checkCameraWindow(int stopX, int stopY)
 
 void Player2::findCollidableTiles(std::vector<Tile*> tiles)
 {
-	int col = int(player2PosX / 80);
-	int row = int(player2PosY / 80);
+	int col = int(player2PosX / 64);
+	int row = int(player2PosY / 64);
 	int index;
 
 	// Function finds 3x3 square of tiles surrounding player and if a tile is water checks collision
@@ -283,7 +283,7 @@ void Player2::findCollidableTiles(std::vector<Tile*> tiles)
 			if (index >= 0 && index < tilesX * tilesY && index >= row * tilesX + tilesX * (i - 1) && index < (row + 1) * tilesX + tilesX * (i - 1))
 			{
 				// If tile is water
-				if (tiles[index]->getType() > 2)
+				if (tiles[index]->getType() > 7)
 				{
 					checkTileCollision(tiles, index);
 				}
