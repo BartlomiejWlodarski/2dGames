@@ -32,7 +32,8 @@ int LEVEL_HEIGHT = 1280;
 //Layer constants
 const int LAYER2_WIDTH = 6400;
 const int LAYER2_HEIGHT = 1280;
-float layer2multiplier = 0.5;
+float layer2multiplier = 0.7;
+float layer3multiplier = 0.3;
 
 //Tile constants
 const int TILE_WIDTH = 64;
@@ -65,6 +66,7 @@ int currentLevel = 1;
 //Tile* tileSet[TOTAL_TILES];
 std::vector <Tile*> tileSet;
 std::vector <Tile*> tileSet2;
+std::vector <Tile*> tileSet3;
 
 //Starts up SDL and creates window
 bool init();
@@ -78,6 +80,7 @@ void close();
 //Sets tiles from the map file
 bool setTiles();
 bool setTiles2();
+bool setTiles3();
 
 //The window we'll be rendering to
 SDL_Window* gWindow = NULL;
@@ -105,16 +108,43 @@ Target target(0, 0);
 
 void renderTile(Tile* tile, SDL_Rect& camera)
 {
-	//Show the tile
-	gTileTexture.render(gRenderer, tile->getBox().x - camera.x, tile->getBox().y - camera.y, &gTileClips[tile->getType()]);
+	if (tile->flip)
+	{
+		gTileTexture.render(gRenderer, tile->getBox().x - camera.x, tile->getBox().y - camera.y, &gTileClips[tile->getType()], 0, 0, SDL_FLIP_HORIZONTAL);
+	}
+	else
+	{
+		gTileTexture.render(gRenderer, tile->getBox().x - camera.x, tile->getBox().y - camera.y, &gTileClips[tile->getType()]);
+	}
 }
 
 
 void renderTile2(Tile* tile, SDL_Rect& camera)
 {
 	//Show the tile
-	gTileTexture2.render(gRenderer, tile->getBox().x - (camera.x * layer2multiplier), tile->getBox().y - camera.y, &gTileClips2[tile->getType()]);
+	//gTileTexture.render(gRenderer, tile->getBox().x - (camera.x * layer2multiplier), tile->getBox().y - camera.y, &gTileClips[tile->getType()]);
+	if (tile->flip)
+	{
+		gTileTexture.render(gRenderer, tile->getBox().x - (camera.x * layer2multiplier), tile->getBox().y - (camera.y * layer2multiplier) - (516 * (1 - layer2multiplier)), &gTileClips[tile->getType()], 0, 0, SDL_FLIP_HORIZONTAL);
+	}
+	else
+	{
+		gTileTexture.render(gRenderer, tile->getBox().x - (camera.x * layer2multiplier), tile->getBox().y - (camera.y * layer2multiplier) - (516 * (1 - layer2multiplier)), &gTileClips[tile->getType()]);
+	}
+}
+
+void renderTile3(Tile* tile, SDL_Rect& camera)
+{
+	//Show the tile
 	//gTileTexture2.render(gRenderer, tile->getBox().x - (camera.x * layer2multiplier), tile->getBox().y - (camera.y * layer2multiplier) - (516 * layer2multiplier), &gTileClips2[tile->getType()]);
+	if (tile->flip)
+	{
+		gTileTexture.render(gRenderer, tile->getBox().x - (camera.x * layer3multiplier), tile->getBox().y - (camera.y * layer3multiplier) - (516 * (1 - layer3multiplier)), &gTileClips[tile->getType()], 0, 0, SDL_FLIP_HORIZONTAL);
+	}
+	else
+	{
+		gTileTexture.render(gRenderer, tile->getBox().x - (camera.x * layer3multiplier), tile->getBox().y - (camera.y * layer3multiplier) - (516 * (1 - layer3multiplier)), &gTileClips[tile->getType()]);
+	}
 }
 
 bool init()
@@ -230,12 +260,6 @@ bool loadMedia(std::vector <Tile*> tiles)
 		success = false;
 	}
 
-	if (!gTileTexture2.loadFromFile("textures/assets64x64.png", gRenderer))
-	{
-		printf("Failed to load assets texture!\n");
-		success = false;
-	}
-
 	//Load tile map
 	if (!setTiles())
 	{
@@ -249,6 +273,14 @@ bool loadMedia(std::vector <Tile*> tiles)
 		printf("Failed to load assets tile set!\n");
 		success = false;
 	}
+
+	//Load tile map
+	if (!setTiles3())
+	{
+		printf("Failed to load assets tile set!\n");
+		success = false;
+	}
+
 	return success;
 }
 
@@ -275,7 +307,6 @@ void close(std::vector <Tile*> tiles, std::vector <Tile*> tiles2)
 	}
 
 	//Free loaded images
-	gPlayer2Texture.free();
 	gPlayer1Texture.free();
 	gTileTexture.free();
 	gTileTexture2.free();
@@ -481,6 +512,9 @@ bool setTiles()
 	//Close the file
 	map.close();
 
+	tileSet[1752]->flip = true;
+
+
 	//If the map was loaded fine
 	return tilesLoaded;
 }
@@ -563,59 +597,100 @@ bool setTiles2()
 				y += TILE_HEIGHT2;
 			}
 		}
+	}
 
-		//Clip the sprite sheet
-		if (tilesLoaded)
+	//Close the file
+	map.close();
+
+	//If the map was loaded fine
+	return tilesLoaded;
+}
+
+bool setTiles3()
+{
+	// Update tile data
+	Tile* tile = new Tile(0, 0, 0, 0, 0);
+
+
+	for (int i = tileSet3.size(); i < TOTAL_TILES2; i++)
+	{
+		tileSet3.push_back(tile);
+	}
+	delete tile;
+
+
+	//Success flag
+	bool tilesLoaded = true;
+
+	//The tile offsets
+	int x = 0, y = 0;
+
+	//string mapPath = "maps/labyrinth" + to_string(currentLevel) + ".map";
+	string mapPath = "maps/z14layer3.map";
+
+	//Open the map
+	std::ifstream map(mapPath);
+
+	//If the map couldn't be loaded
+	if (map.fail())
+	{
+		printf("Unable to load map file!\n");
+		tilesLoaded = false;
+	}
+	else
+	{
+		//Initialize the tiles
+		for (int i = 0; i < TOTAL_TILES2; ++i)
 		{
-			gTileClips2[0].x = 0;
-			gTileClips2[0].y = 0;
-			gTileClips2[0].w = TILE_WIDTH2;
-			gTileClips2[0].h = TILE_HEIGHT2;
+			//Determines what kind of tile will be made
+			int tileType = -1;
 
-			gTileClips2[1].x = 0;
-			gTileClips2[1].y = 64;
-			gTileClips2[1].w = TILE_WIDTH2;
-			gTileClips2[1].h = TILE_HEIGHT2;
+			//Read tile from map file
+			map >> tileType;
 
-			gTileClips2[2].x = 0;
-			gTileClips2[2].y = 128;
-			gTileClips2[2].w = TILE_WIDTH2;
-			gTileClips2[2].h = TILE_HEIGHT2;
+			//If the was a problem in reading the map
+			if (map.fail())
+			{
+				//Stop loading map
+				printf("Error loading map: Unexpected end of file!\n");
+				tilesLoaded = false;
+				break;
+			}
 
-			gTileClips2[3].x = 64;
-			gTileClips2[3].y = 0;
-			gTileClips2[3].w = TILE_WIDTH2;
-			gTileClips2[3].h = TILE_HEIGHT2;
+			//If the number is a valid tile number
+			if ((tileType >= 0) && (tileType < TOTAL_TILE_SPRITES2))
+			{
+				tileSet3[i] = new Tile(x, y, tileType, TILE_WIDTH2, TILE_HEIGHT2);
+			}
+			//If we don't recognize the tile type
+			else
+			{
+				//Stop loading map
+				printf("Error loading map: Invalid tile type at %d!\n", i);
+				tilesLoaded = false;
+				break;
+			}
 
-			gTileClips2[4].x = 64;
-			gTileClips2[4].y = 64;
-			gTileClips2[4].w = TILE_WIDTH2;
-			gTileClips2[4].h = TILE_HEIGHT2;
+			//Move to next tile spot
+			x += TILE_WIDTH2;
 
-			gTileClips2[5].x = 64;
-			gTileClips2[5].y = 128;
-			gTileClips2[5].w = TILE_WIDTH2;
-			gTileClips2[5].h = TILE_HEIGHT2;
+			//If we've gone too far
+			if (x >= LAYER2_WIDTH)
+			{
+				//Move back
+				x = 0;
 
-			gTileClips2[6].x = 128;
-			gTileClips2[6].y = 0;
-			gTileClips2[6].w = TILE_WIDTH2;
-			gTileClips2[6].h = TILE_HEIGHT2;
-
-			gTileClips2[7].x = 128;
-			gTileClips2[7].y = 64;
-			gTileClips2[7].w = TILE_WIDTH2;
-			gTileClips2[7].h = TILE_HEIGHT2;
-
-			gTileClips2[8].x = 160;
-			gTileClips2[8].y = 160;
-			gTileClips2[8].w = TILE_WIDTH2;
-			gTileClips2[8].h = TILE_HEIGHT2;
+				//Move to the next row
+				y += TILE_HEIGHT2;
+			}
 		}
 	}
 
 	//Close the file
 	map.close();
+
+	tileSet3[1520]->flip = true;
+	tileSet3[1620]->flip = true;
 
 	//If the map was loaded fine
 	return tilesLoaded;
@@ -684,7 +759,7 @@ void randomizeSpawnLocations(Player1* p1, Player2* p2, Target* t)
 	while (!success)
 	{
 		//randomTile2 = rand() % TOTAL_TILES;
-		randomTile2 = 130;
+		randomTile2 = 1500;
 		if (tileSet[randomTile2]->getType() < 3 && randomTile2 != randomTile)
 		{
 			p2->setPlayer2PosX(tileSet[randomTile2]->getBox().x + 0.5 * tileSet[randomTile2]->getBox().w);
@@ -835,6 +910,12 @@ int main(int argc, char* args[])
 					SDL_RenderClear(gRenderer);
 
 					
+					//Render layer
+					for (int i = 0; i < TOTAL_TILES2; ++i)
+					{
+						renderTile3(tileSet3[i], camera.camera);
+					}
+
 					//Render layer
 					for (int i = 0; i < TOTAL_TILES2; ++i)
 					{

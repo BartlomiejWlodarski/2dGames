@@ -30,7 +30,7 @@ public:
 	float getRight();
 	float getTop();
 	float getBottom();
-
+	bool flip = false;
 private:
 	//The attributes of the tile
 	SDL_Rect mBox;
