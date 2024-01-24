@@ -330,6 +330,22 @@ void handleEvent(SDL_Event& e, int camX, int camY)
 		cameraOption += 1;
 		cameraOption %= 4;
 	}
+	else if (e.type == SDL_KEYDOWN && e.key.repeat == 0 && e.key.keysym.sym == SDLK_n)
+	{
+		layer2multiplier += 0.1;
+	}
+	else if (e.type == SDL_KEYDOWN && e.key.repeat == 0 && e.key.keysym.sym == SDLK_m)
+	{
+		layer2multiplier -= 0.1;
+	}
+	else if (e.type == SDL_KEYDOWN && e.key.repeat == 0 && e.key.keysym.sym == SDLK_k)
+	{
+		layer3multiplier += 0.1;
+	}
+	else if (e.type == SDL_KEYDOWN && e.key.repeat == 0 && e.key.keysym.sym == SDLK_l)
+	{
+		layer3multiplier -= 0.1;
+	}
 	else if (e.type == SDL_KEYDOWN && e.key.repeat == 0)
 	{
 		//Adjust the velocity
